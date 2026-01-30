@@ -3,11 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<<<<<<< Updated upstream
-    <title>Fixed Block Avatar</title>
-=======
     <title>3D Block Avatar</title>
->>>>>>> Stashed changes
     <style>
       :root {
         --bg-color: #f0f4f8;
@@ -32,11 +28,7 @@
         height: 100vh;
       }
 
-<<<<<<< Updated upstream
-      /* --- SIDEBAR --- */
-=======
       /* --- UI --- */
->>>>>>> Stashed changes
       #sidebar {
         width: var(--sidebar-width);
         background: white;
@@ -51,50 +43,7 @@
       label { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
       input[type=color] { width: 40px; border: none; padding: 0; cursor: pointer; }
 
-<<<<<<< Updated upstream
-      h3 {
-        margin: 0 0 10px 0;
-        color: #333;
-      }
-
-      .control {
-        background: #f8f9fa;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #e0e0e0;
-      }
-
-      label {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 14px;
-        font-weight: 600;
-        color: #555;
-        margin-bottom: 5px;
-      }
-
-      input[type="color"] {
-        border: none;
-        width: 40px;
-        height: 30px;
-        cursor: pointer;
-        border-radius: 4px;
-      }
-      input[type="range"] {
-        width: 100%;
-        cursor: pointer;
-      }
-      input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-      }
-
-      /* --- SCENE --- */
-=======
       /* --- 3D SCENE --- */
->>>>>>> Stashed changes
       #scene {
         flex-grow: 1;
         perspective: 1000px;
@@ -109,13 +58,6 @@
         overflow: hidden;
       }
 
-<<<<<<< Updated upstream
-      #scene:active {
-        cursor: grabbing;
-      }
-
-=======
->>>>>>> Stashed changes
       #pivot {
         position: relative;
         transform-style: preserve-3d;
@@ -124,12 +66,8 @@
         width: 0; height: 0;
       }
 
-<<<<<<< Updated upstream
-      /* --- CUBE LOGIC --- */
-=======
       /* --- THE CUBOID ENGINE --- */
       /* This calculates 3D boxes based on CSS variables --w, --h, --d */
->>>>>>> Stashed changes
       .cuboid {
         position: absolute;
         transform-style: preserve-3d;
@@ -137,17 +75,6 @@
       
       .face {
         position: absolute;
-<<<<<<< Updated upstream
-        width: 100%;
-        height: 100%;
-        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05); /* Crisp edges */
-      }
-
-      /* Lighting / Shading */
-      .face.front {
-        transform: translateZ(var(--depth-half));
-        filter: brightness(100%);
-=======
         backface-visibility: hidden;
         /* Tiny border fixes "cracks" between faces */
         outline: 1px solid rgba(0,0,0,0.03); 
@@ -163,7 +90,6 @@
         width: var(--d); height: var(--h); 
         left: calc((var(--w) - var(--d)) / 2); 
         transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); 
->>>>>>> Stashed changes
       }
       .cuboid .left { 
         width: var(--d); height: var(--h); 
@@ -183,78 +109,6 @@
         transform: rotateX(-90deg) translateZ(calc(var(--h) / 2)); 
       }
 
-<<<<<<< Updated upstream
-      /* --- AVATAR PARTS --- */
-
-      /* HEAD */
-      .head {
-        width: 60px;
-        height: 60px;
-        --depth: 60px;
-        --width-half: 30px;
-        --height-half: 30px;
-        --depth-half: 30px;
-        transform: translateY(-90px);
-        z-index: 10;
-      }
-      .head .face {
-        background: var(--skin-color);
-      }
-
-      .eye {
-        position: absolute;
-        width: 10px;
-        height: 10px;
-        background: #222;
-        transform: translateZ(31px);
-      }
-      .eye.left {
-        top: 22px;
-        left: 12px;
-      }
-      .eye.right {
-        top: 22px;
-        right: 12px;
-      }
-
-      .mouth {
-        position: absolute;
-        width: 20px;
-        height: 6px;
-        background: #a25e5e;
-        top: 42px;
-        left: 20px;
-        transform: translateZ(31px);
-        border-radius: 4px;
-      }
-
-      /* HAIR */
-      .hair {
-        width: 64px;
-        height: 20px;
-        --depth: 64px;
-        --width-half: 32px;
-        --height-half: 10px;
-        --depth-half: 32px;
-        transform: translateY(-115px);
-      }
-      .hair .face {
-        background: var(--hair-color);
-      }
-
-      /* BODY (Slightly thicker now to look solid) */
-      .body {
-        width: 60px;
-        height: 80px;
-        --depth: 40px;
-        --width-half: 30px;
-        --height-half: 40px;
-        --depth-half: 20px;
-        transform: translateY(-20px);
-      }
-      .body .face {
-        background: var(--shirt-color);
-=======
       /* 3D Shading - Makes it look solid, not flat */
       .front  { filter: brightness(1.0); }
       .back   { filter: brightness(0.6); }
@@ -271,30 +125,10 @@
       .body {
         --w: 60px; --h: 70px; --d: 30px;
         transform: translate3d(-30px, -70px, 0); 
->>>>>>> Stashed changes
       }
       .body .face { background: var(--shirt-color); }
       .body .top { background: var(--skin-color); } /* Neck hole area */
 
-<<<<<<< Updated upstream
-      /* ARMS (Fixed Positioning: 40px instead of 45px) */
-      .arm {
-        width: 20px;
-        height: 70px;
-        --depth: 20px;
-        --width-half: 10px;
-        --height-half: 35px;
-        --depth-half: 10px;
-        transform-origin: 50% 10px; /* Pivot at shoulder */
-      }
-      .arm .face {
-        background: var(--skin-color);
-      }
-      .arm .face.top,
-      .arm .face.top + .face {
-        background: var(--shirt-color);
-        height: 20px;
-=======
       /* 2. NECK */
       .neck {
         --w: 20px; --h: 10px; --d: 20px;
@@ -332,7 +166,6 @@
       .arm {
         --w: 20px; --h: 70px; --d: 20px; /* Square cross-section */
         transform-origin: 50% 10px; 
->>>>>>> Stashed changes
       }
       .arm .face { background: var(--skin-color); }
       
@@ -340,17 +173,7 @@
       .arm .top, .arm .top + div { background: var(--shirt-color); } 
       .arm .top { background: var(--shirt-color); }
 
-      /* FIXED: Moved from 45px to 40px to close gap */
       .arm.left {
-<<<<<<< Updated upstream
-        transform: translate(-40px, -20px);
-      }
-      .arm.right {
-        transform: translate(40px, -20px);
-      }
-
-      /* LEGS */
-=======
         /* -30 (Body) - 20 (Arm) = -50 */
         transform: translate3d(-50px, -65px, 0);
       }
@@ -360,7 +183,6 @@
       }
 
       /* 6. LEGS - Now fully 3D Cuboids */
->>>>>>> Stashed changes
       .leg {
         --w: 24px; --h: 70px; --d: 24px; /* Solid thick legs */
         transform-origin: 50% 0; 
@@ -375,25 +197,6 @@
         transform: translate3d(4px, 0, 0);
       }
 
-<<<<<<< Updated upstream
-      /* --- ANIMATIONS (UPDATED WITH FIXES) --- */
-
-      .walking .leg.left {
-        animation: walk-leg-l 0.8s infinite ease-in-out alternate;
-      }
-      .walking .leg.right {
-        animation: walk-leg-r 0.8s infinite ease-in-out alternate;
-      }
-      .walking .arm.left {
-        animation: walk-arm-l 0.8s infinite ease-in-out alternate;
-      }
-      .walking .arm.right {
-        animation: walk-arm-r 0.8s infinite ease-in-out alternate;
-      }
-      .walking .body,
-      .walking .head,
-      .walking .hair {
-=======
       /* --- ANIMATIONS --- */
       .walking .leg.left { animation: walk 0.8s infinite ease-in-out alternate; }
       .walking .leg.right { animation: walk 0.8s infinite ease-in-out alternate-reverse; }
@@ -401,7 +204,6 @@
       .walking .arm.right { animation: swing 0.8s infinite ease-in-out alternate; }
       
       .walking .body, .walking .head, .walking .neck, .walking .hair, .walking .hair-back {
->>>>>>> Stashed changes
         animation: bounce 0.4s infinite ease-in-out alternate;
       }
 
@@ -415,39 +217,6 @@
       .arm.left { --tx: -50px; --ty: -65px; }
       .arm.right { --tx: 30px; --ty: -65px; }
 
-<<<<<<< Updated upstream
-      /* FIXED: Animation updated to use 40px */
-      @keyframes walk-arm-l {
-        from {
-          transform: translate(-40px, -20px) rotateX(-25deg);
-        }
-        to {
-          transform: translate(-40px, -20px) rotateX(25deg);
-        }
-      }
-      @keyframes walk-arm-r {
-        from {
-          transform: translate(40px, -20px) rotateX(25deg);
-        }
-        to {
-          transform: translate(40px, -20px) rotateX(-25deg);
-        }
-      }
-
-      @keyframes bounce {
-        from {
-          transform: translateY(-20px);
-        }
-        to {
-          transform: translateY(-22px);
-        }
-      }
-      .walking .head {
-        animation: head-bounce 0.4s infinite ease-in-out alternate;
-      }
-      .walking .hair {
-        animation: hair-bounce 0.4s infinite ease-in-out alternate;
-=======
       @keyframes swing { 
         from { transform: translate3d(var(--tx), var(--ty), 0) rotateX(-30deg); } 
         to { transform: translate3d(var(--tx), var(--ty), 0) rotateX(30deg); } 
@@ -456,7 +225,6 @@
       @keyframes bounce {
         from { transform: translate3d(var(--bx, 0), var(--by, 0), 0); }
         to { transform: translate3d(var(--bx, 0), calc(var(--by, 0) - 4px), 0); }
->>>>>>> Stashed changes
       }
       
       .body { --bx: -30px; --by: -70px; }
@@ -470,13 +238,7 @@
   <body>
 
     <div id="sidebar">
-<<<<<<< Updated upstream
-      <h3>Avatar Editor</h3>
-      <p style="font-size: 12px; color: #777">Drag to Rotate</p>
-
-=======
       <h3>3D Avatar Tools</h3>
->>>>>>> Stashed changes
       <div class="control">
         <label>Walk Animation <input type="checkbox" id="walkCheck"></label>
       </div>
