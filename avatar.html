@@ -1,43 +1,57 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<<<<<<< Updated upstream
     <title>Fixed Block Avatar</title>
+=======
+    <title>3D Block Avatar</title>
+>>>>>>> Stashed changes
     <style>
       :root {
         --bg-color: #f0f4f8;
         --sidebar-width: 280px;
 
-        /* Dynamic Colors */
+        /* Colors */
         --skin-color: #ffcc99;
         --shirt-color: #3498db;
         --pants-color: #2c3e50;
-        --hair-color: #5d4037;
+        --hair-color: #3e2723;
+        --shoes-color: #1a1a1a;
       }
+
+      * { box-sizing: border-box; }
 
       body {
         margin: 0;
         overflow: hidden;
-        font-family: "Segoe UI", sans-serif;
+        font-family: sans-serif;
         background: var(--bg-color);
         display: flex;
         height: 100vh;
       }
 
+<<<<<<< Updated upstream
       /* --- SIDEBAR --- */
+=======
+      /* --- UI --- */
+>>>>>>> Stashed changes
       #sidebar {
         width: var(--sidebar-width);
         background: white;
         padding: 20px;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         z-index: 100;
         display: flex;
         flex-direction: column;
         gap: 15px;
-        overflow-y: auto;
       }
+      .control { padding: 10px; background: #eee; border-radius: 8px; }
+      label { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
+      input[type=color] { width: 40px; border: none; padding: 0; cursor: pointer; }
 
+<<<<<<< Updated upstream
       h3 {
         margin: 0 0 10px 0;
         color: #333;
@@ -78,37 +92,52 @@
       }
 
       /* --- SCENE --- */
+=======
+      /* --- 3D SCENE --- */
+>>>>>>> Stashed changes
       #scene {
         flex-grow: 1;
-        perspective: 800px;
+        perspective: 1000px;
         display: flex;
         justify-content: center;
         align-items: center;
-        cursor: grab;
-        background-image: radial-gradient(#d1d8e0 1px, transparent 1px);
-        background-size: 20px 20px;
+        /* Grid pattern to help see rotation */
+        background-image: 
+            linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+        overflow: hidden;
       }
 
+<<<<<<< Updated upstream
       #scene:active {
         cursor: grabbing;
       }
 
+=======
+>>>>>>> Stashed changes
       #pivot {
-        transform-style: preserve-3d;
-        transform: rotateX(-15deg) rotateY(30deg);
-        width: 0;
-        height: 0;
         position: relative;
+        transform-style: preserve-3d;
+        /* Initial Angle to show off the 3D depth immediately */
+        transform: rotateX(-15deg) rotateY(45deg);
+        width: 0; height: 0;
       }
 
+<<<<<<< Updated upstream
       /* --- CUBE LOGIC --- */
+=======
+      /* --- THE CUBOID ENGINE --- */
+      /* This calculates 3D boxes based on CSS variables --w, --h, --d */
+>>>>>>> Stashed changes
       .cuboid {
         position: absolute;
         transform-style: preserve-3d;
       }
-
+      
       .face {
         position: absolute;
+<<<<<<< Updated upstream
         width: 100%;
         height: 100%;
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05); /* Crisp edges */
@@ -118,36 +147,43 @@
       .face.front {
         transform: translateZ(var(--depth-half));
         filter: brightness(100%);
-      }
-      .face.back {
-        transform: rotateY(180deg) translateZ(var(--depth-half));
-        filter: brightness(70%);
-      }
-      .face.right {
-        transform: rotateY(90deg) translateZ(var(--width-half));
-        width: var(--depth);
-        left: calc(var(--width-half) - var(--depth-half));
-        filter: brightness(85%);
-      }
-      .face.left {
-        transform: rotateY(-90deg) translateZ(var(--width-half));
-        width: var(--depth);
-        left: calc(var(--width-half) - var(--depth-half));
-        filter: brightness(85%);
-      }
-      .face.top {
-        transform: rotateX(90deg) translateZ(var(--height-half));
-        height: var(--depth);
-        top: calc(var(--height-half) - var(--depth-half));
-        filter: brightness(110%);
-      }
-      .face.bottom {
-        transform: rotateX(-90deg) translateZ(var(--height-half));
-        height: var(--depth);
-        top: calc(var(--height-half) - var(--depth-half));
-        filter: brightness(50%);
+=======
+        backface-visibility: hidden;
+        /* Tiny border fixes "cracks" between faces */
+        outline: 1px solid rgba(0,0,0,0.03); 
       }
 
+      /* Front & Back */
+      .cuboid .front { width: var(--w); height: var(--h); transform: translateZ(calc(var(--d) / 2)); }
+      .cuboid .back  { width: var(--w); height: var(--h); transform: rotateY(180deg) translateZ(calc(var(--d) / 2)); }
+      
+      /* Sides (The most important part for 3D depth) */
+      /* We calculate the offset to center the side face before rotating it */
+      .cuboid .right { 
+        width: var(--d); height: var(--h); 
+        left: calc((var(--w) - var(--d)) / 2); 
+        transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); 
+>>>>>>> Stashed changes
+      }
+      .cuboid .left { 
+        width: var(--d); height: var(--h); 
+        left: calc((var(--w) - var(--d)) / 2); 
+        transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); 
+      }
+      
+      /* Top & Bottom */
+      .cuboid .top { 
+        width: var(--w); height: var(--d); 
+        top: calc((var(--h) - var(--d)) / 2); 
+        transform: rotateX(90deg) translateZ(calc(var(--h) / 2)); 
+      }
+      .cuboid .bottom { 
+        width: var(--w); height: var(--d); 
+        top: calc((var(--h) - var(--d)) / 2); 
+        transform: rotateX(-90deg) translateZ(calc(var(--h) / 2)); 
+      }
+
+<<<<<<< Updated upstream
       /* --- AVATAR PARTS --- */
 
       /* HEAD */
@@ -218,8 +254,29 @@
       }
       .body .face {
         background: var(--shirt-color);
-      }
+=======
+      /* 3D Shading - Makes it look solid, not flat */
+      .front  { filter: brightness(1.0); }
+      .back   { filter: brightness(0.6); }
+      .right  { filter: brightness(0.75); } /* Darker side */
+      .left   { filter: brightness(0.75); } /* Darker side */
+      .top    { filter: brightness(1.15); } /* Highlight top */
+      .bottom { filter: brightness(0.4); }  /* Shadow bottom */
 
+
+      /* --- AVATAR PARTS --- */
+      /* Center Point (0,0,0) is the HIPS */
+
+      /* 1. BODY: Broad and thick */
+      .body {
+        --w: 60px; --h: 70px; --d: 30px;
+        transform: translate3d(-30px, -70px, 0); 
+>>>>>>> Stashed changes
+      }
+      .body .face { background: var(--shirt-color); }
+      .body .top { background: var(--skin-color); } /* Neck hole area */
+
+<<<<<<< Updated upstream
       /* ARMS (Fixed Positioning: 40px instead of 45px) */
       .arm {
         width: 20px;
@@ -237,10 +294,55 @@
       .arm .face.top + .face {
         background: var(--shirt-color);
         height: 20px;
+=======
+      /* 2. NECK */
+      .neck {
+        --w: 20px; --h: 10px; --d: 20px;
+        transform: translate3d(-10px, -80px, 0);
       }
+      .neck .face { background: var(--skin-color); filter: brightness(0.85); }
+
+      /* 3. HEAD */
+      .head {
+        --w: 60px; --h: 60px; --d: 60px;
+        transform: translate3d(-30px, -140px, 0);
+      }
+      .head .face { background: var(--skin-color); }
+      
+      /* Face Features */
+      .eye { position: absolute; width: 10px; height: 10px; background: #222; top: 25px; border-radius: 50%; }
+      .eye.l { left: 12px; }
+      .eye.r { right: 12px; }
+      .mouth { position: absolute; width: 24px; height: 6px; background: #a55; top: 45px; left: 18px; border-radius: 4px; }
+
+      /* 4. HAIR */
+      .hair {
+        --w: 64px; --h: 20px; --d: 64px;
+        transform: translate3d(-32px, -150px, 0);
+      }
+      .hair .face { background: var(--hair-color); }
+      .hair-back {
+        --w: 64px; --h: 30px; --d: 64px;
+        transform: translate3d(-32px, -135px, 0);
+      }
+      .hair-back .face { background: var(--hair-color); }
+      .hair-back .front, .hair-back .bottom { display: none; } 
+
+      /* 5. ARMS - Now fully 3D Cuboids */
+      .arm {
+        --w: 20px; --h: 70px; --d: 20px; /* Square cross-section */
+        transform-origin: 50% 10px; 
+>>>>>>> Stashed changes
+      }
+      .arm .face { background: var(--skin-color); }
+      
+      /* Sleeve Logic: Top part is shirt color */
+      .arm .top, .arm .top + div { background: var(--shirt-color); } 
+      .arm .top { background: var(--shirt-color); }
 
       /* FIXED: Moved from 45px to 40px to close gap */
       .arm.left {
+<<<<<<< Updated upstream
         transform: translate(-40px, -20px);
       }
       .arm.right {
@@ -248,25 +350,32 @@
       }
 
       /* LEGS */
-      .leg {
-        width: 25px;
-        height: 70px;
-        --depth: 25px;
-        --width-half: 12.5px;
-        --height-half: 35px;
-        --depth-half: 12.5px;
-        transform-origin: 50% 0; /* Pivot at hip */
+=======
+        /* -30 (Body) - 20 (Arm) = -50 */
+        transform: translate3d(-50px, -65px, 0);
       }
-      .leg .face {
-        background: var(--pants-color);
-      }
-      .leg.left {
-        transform: translate(-16px, 55px);
-      }
-      .leg.right {
-        transform: translate(16px, 55px);
+      .arm.right {
+        /* 30 (Body) */
+        transform: translate3d(30px, -65px, 0);
       }
 
+      /* 6. LEGS - Now fully 3D Cuboids */
+>>>>>>> Stashed changes
+      .leg {
+        --w: 24px; --h: 70px; --d: 24px; /* Solid thick legs */
+        transform-origin: 50% 0; 
+      }
+      .leg .face { background: var(--pants-color); }
+      .leg .bottom { background: var(--shoes-color); }
+
+      .leg.left {
+        transform: translate3d(-28px, 0, 0);
+      }
+      .leg.right {
+        transform: translate3d(4px, 0, 0);
+      }
+
+<<<<<<< Updated upstream
       /* --- ANIMATIONS (UPDATED WITH FIXES) --- */
 
       .walking .leg.left {
@@ -284,26 +393,29 @@
       .walking .body,
       .walking .head,
       .walking .hair {
+=======
+      /* --- ANIMATIONS --- */
+      .walking .leg.left { animation: walk 0.8s infinite ease-in-out alternate; }
+      .walking .leg.right { animation: walk 0.8s infinite ease-in-out alternate-reverse; }
+      .walking .arm.left { animation: swing 0.8s infinite ease-in-out alternate-reverse; }
+      .walking .arm.right { animation: swing 0.8s infinite ease-in-out alternate; }
+      
+      .walking .body, .walking .head, .walking .neck, .walking .hair, .walking .hair-back {
+>>>>>>> Stashed changes
         animation: bounce 0.4s infinite ease-in-out alternate;
       }
 
-      @keyframes walk-leg-l {
-        from {
-          transform: translate(-16px, 55px) rotateX(25deg);
-        }
-        to {
-          transform: translate(-16px, 55px) rotateX(-25deg);
-        }
+      @keyframes walk { 
+        from { transform: translate3d(var(--tx, -28px), 0, 0) rotateX(30deg); } 
+        to { transform: translate3d(var(--tx, -28px), 0, 0) rotateX(-30deg); } 
       }
-      @keyframes walk-leg-r {
-        from {
-          transform: translate(16px, 55px) rotateX(-25deg);
-        }
-        to {
-          transform: translate(16px, 55px) rotateX(25deg);
-        }
-      }
+      
+      .leg.left { --tx: -28px; }
+      .leg.right { --tx: 4px; }
+      .arm.left { --tx: -50px; --ty: -65px; }
+      .arm.right { --tx: 30px; --ty: -65px; }
 
+<<<<<<< Updated upstream
       /* FIXED: Animation updated to use 40px */
       @keyframes walk-arm-l {
         from {
@@ -335,207 +447,162 @@
       }
       .walking .hair {
         animation: hair-bounce 0.4s infinite ease-in-out alternate;
+=======
+      @keyframes swing { 
+        from { transform: translate3d(var(--tx), var(--ty), 0) rotateX(-30deg); } 
+        to { transform: translate3d(var(--tx), var(--ty), 0) rotateX(30deg); } 
       }
 
-      @keyframes head-bounce {
-        from {
-          transform: translateY(-90px);
-        }
-        to {
-          transform: translateY(-92px);
-        }
+      @keyframes bounce {
+        from { transform: translate3d(var(--bx, 0), var(--by, 0), 0); }
+        to { transform: translate3d(var(--bx, 0), calc(var(--by, 0) - 4px), 0); }
+>>>>>>> Stashed changes
       }
-      @keyframes hair-bounce {
-        from {
-          transform: translateY(-115px);
-        }
-        to {
-          transform: translateY(-117px);
-        }
-      }
+      
+      .body { --bx: -30px; --by: -70px; }
+      .neck { --bx: -10px; --by: -80px; }
+      .head { --bx: -30px; --by: -140px; }
+      .hair { --bx: -32px; --by: -150px; }
+      .hair-back { --bx: -32px; --by: -135px; }
+
     </style>
   </head>
   <body>
+
     <div id="sidebar">
+<<<<<<< Updated upstream
       <h3>Avatar Editor</h3>
       <p style="font-size: 12px; color: #777">Drag to Rotate</p>
 
+=======
+      <h3>3D Avatar Tools</h3>
+>>>>>>> Stashed changes
       <div class="control">
-        <label>Walk Animation <input type="checkbox" id="walkCheck" /></label>
+        <label>Walk Animation <input type="checkbox" id="walkCheck"></label>
       </div>
-
       <div class="control">
-        <label>Skin <input type="color" id="skinInp" value="#ffcc99" /></label>
-        <label>Hair <input type="color" id="hairInp" value="#5d4037" /></label>
+        <label>Zoom <input type="range" id="zoomInp" min="0.5" max="2" step="0.1" value="1"></label>
       </div>
-
       <div class="control">
-        <label
-          >Shirt <input type="color" id="shirtInp" value="#3498db"
-        /></label>
-        <label
-          >Pants <input type="color" id="pantsInp" value="#2c3e50"
-        /></label>
+        <label>Shirt <input type="color" id="shirtInp" value="#3498db"></label>
+        <label>Pants <input type="color" id="pantsInp" value="#2c3e50"></label>
+        <label>Skin <input type="color" id="skinInp" value="#ffcc99"></label>
+        <label>Hair <input type="color" id="hairInp" value="#3e2723"></label>
       </div>
-
-      <div class="control">
-        <label>Zoom</label>
-        <input
-          type="range"
-          id="zoomInp"
-          min="0.5"
-          max="2"
-          step="0.1"
-          value="1"
-        />
-      </div>
-
-      <button
-        id="resetBtn"
-        style="padding: 10px; cursor: pointer; margin-top: 10px"
-      >
-        Reset View
-      </button>
+      <p style="font-size:12px; color:#666;">Click & Drag canvas to rotate 3D view.</p>
     </div>
 
     <div id="scene">
       <div id="pivot">
-        <div class="cuboid hair">
-          <div class="face front"></div>
-          <div class="face back"></div>
-          <div class="face left"></div>
-          <div class="face right"></div>
-          <div class="face top"></div>
-          <div class="face bottom"></div>
+        
+        <div class="cuboid leg left">
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
+        </div>
+        <div class="cuboid leg right">
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
+        </div>
+
+        <div class="cuboid body">
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
+        </div>
+
+        <div class="cuboid neck">
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
         </div>
 
         <div class="cuboid head">
           <div class="face front">
-            <div class="eye left"></div>
-            <div class="eye right"></div>
-            <div class="mouth"></div>
+            <div class="eye l"></div><div class="eye r"></div><div class="mouth"></div>
           </div>
           <div class="face back"></div>
-          <div class="face left"></div>
-          <div class="face right"></div>
-          <div class="face top"></div>
-          <div class="face bottom"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
         </div>
 
-        <div class="cuboid body">
-          <div class="face front"></div>
+        <div class="cuboid hair">
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
+        </div>
+        <div class="cuboid hair-back">
           <div class="face back"></div>
-          <div class="face left"></div>
-          <div class="face right"></div>
+          <div class="face left"></div><div class="face right"></div>
           <div class="face top"></div>
-          <div class="face bottom"></div>
         </div>
 
         <div class="cuboid arm left">
-          <div class="face front"></div>
-          <div class="face back"></div>
-          <div class="face left"></div>
-          <div class="face right"></div>
-          <div class="face top"></div>
-          <div class="face bottom"></div>
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
         </div>
         <div class="cuboid arm right">
-          <div class="face front"></div>
-          <div class="face back"></div>
-          <div class="face left"></div>
-          <div class="face right"></div>
-          <div class="face top"></div>
-          <div class="face bottom"></div>
+          <div class="face front"></div><div class="face back"></div>
+          <div class="face left"></div><div class="face right"></div>
+          <div class="face top"></div><div class="face bottom"></div>
         </div>
 
-        <div class="cuboid leg left">
-          <div class="face front"></div>
-          <div class="face back"></div>
-          <div class="face left"></div>
-          <div class="face right"></div>
-          <div class="face top"></div>
-          <div class="face bottom"></div>
-        </div>
-        <div class="cuboid leg right">
-          <div class="face front"></div>
-          <div class="face back"></div>
-          <div class="face left"></div>
-          <div class="face right"></div>
-          <div class="face top"></div>
-          <div class="face bottom"></div>
-        </div>
       </div>
     </div>
 
     <script>
       const root = document.documentElement;
 
-      // --- COLOR UPDATES ---
-      const inputs = {
-        skin: "skinInp",
-        hair: "hairInp",
-        shirt: "shirtInp",
-        pants: "pantsInp",
+      // Color binding
+      const colorMap = {
+        'shirtInp': '--shirt-color',
+        'pantsInp': '--pants-color',
+        'skinInp': '--skin-color',
+        'hairInp': '--hair-color'
       };
 
-      for (const [key, id] of Object.entries(inputs)) {
-        document.getElementById(id).addEventListener("input", (e) => {
-          root.style.setProperty(`--${key}-color`, e.target.value);
+      Object.keys(colorMap).forEach(id => {
+        document.getElementById(id).addEventListener('input', (e) => {
+          root.style.setProperty(colorMap[id], e.target.value);
         });
+      });
+
+      // Walk Animation
+      document.getElementById('walkCheck').addEventListener('change', (e) => {
+        const pivot = document.getElementById('pivot');
+        if(e.target.checked) pivot.classList.add('walking');
+        else pivot.classList.remove('walking');
+      });
+
+      // Drag Rotation & Zoom logic
+      let isDragging = false, startX, startY;
+      let rotX = -15, rotY = 45; // Start at an angle to show 3D nature
+      const scene = document.getElementById('scene');
+      const pivot = document.getElementById('pivot');
+      const zoom = document.getElementById('zoomInp');
+
+      function updateTransform() {
+        const z = zoom.value;
+        pivot.style.transform = `scale(${z}) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       }
 
-      // --- WALK TOGGLE ---
-      document.getElementById("walkCheck").addEventListener("change", (e) => {
-        const pivot = document.getElementById("pivot");
-        if (e.target.checked) {
-          pivot.classList.add("walking");
-        } else {
-          pivot.classList.remove("walking");
-        }
-      });
+      document.getElementById('zoomInp').addEventListener('input', updateTransform);
 
-      // --- ZOOM ---
-      document.getElementById("zoomInp").addEventListener("input", (e) => {
-        document.getElementById("pivot").style.scale = e.target.value;
-      });
-
-      // --- ROTATION ---
-      const scene = document.getElementById("scene");
-      const pivot = document.getElementById("pivot");
-
-      let isDragging = false;
-      let startX, startY;
-      let rotX = -15;
-      let rotY = 30;
-
-      scene.addEventListener("mousedown", (e) => {
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-      });
-
-      window.addEventListener("mouseup", () => (isDragging = false));
-
-      window.addEventListener("mousemove", (e) => {
-        if (!isDragging) return;
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
-
-        rotY += deltaX * 0.5;
-        rotX -= deltaY * 0.5;
-        // Clamp Look Up/Down
+      scene.addEventListener('mousedown', e => { isDragging = true; startX = e.clientX; startY = e.clientY; });
+      window.addEventListener('mouseup', () => isDragging = false);
+      window.addEventListener('mousemove', e => {
+        if(!isDragging) return;
+        rotY += (e.clientX - startX) * 0.5;
+        rotX -= (e.clientY - startY) * 0.5;
         rotX = Math.max(-90, Math.min(90, rotX));
-
-        pivot.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        
+        updateTransform();
         startX = e.clientX;
         startY = e.clientY;
       });
 
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        rotX = -15;
-        rotY = 30;
-        pivot.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      });
     </script>
   </body>
 </html>
