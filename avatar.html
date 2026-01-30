@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Animated Block Avatar</title>
+    <title>Fixed Block Avatar</title>
     <style>
       :root {
         --bg-color: #f0f4f8;
@@ -25,7 +25,7 @@
         height: 100vh;
       }
 
-      /* SIDEBAR */
+      /* --- SIDEBAR --- */
       #sidebar {
         width: var(--sidebar-width);
         background: white;
@@ -77,7 +77,7 @@
         cursor: pointer;
       }
 
-      /* SCENE */
+      /* --- SCENE --- */
       #scene {
         flex-grow: 1;
         perspective: 800px;
@@ -93,7 +93,6 @@
         cursor: grabbing;
       }
 
-      /* PIVOT & ANIMATION CONTAINER */
       #pivot {
         transform-style: preserve-3d;
         transform: rotateX(-15deg) rotateY(30deg);
@@ -102,7 +101,7 @@
         position: relative;
       }
 
-      /* GENERIC CUBOID LOGIC */
+      /* --- CUBE LOGIC --- */
       .cuboid {
         position: absolute;
         transform-style: preserve-3d;
@@ -112,11 +111,10 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        /* Border prevents "bleeding" pixels at edges */
-        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05); /* Crisp edges */
       }
 
-      /* FAKE LIGHTING (CSS Filters) */
+      /* Lighting / Shading */
       .face.front {
         transform: translateZ(var(--depth-half));
         filter: brightness(100%);
@@ -150,9 +148,9 @@
         filter: brightness(50%);
       }
 
-      /* --- CHARACTER PARTS --- */
+      /* --- AVATAR PARTS --- */
 
-      /* HEAD (60x60x60) */
+      /* HEAD */
       .head {
         width: 60px;
         height: 60px;
@@ -167,7 +165,6 @@
         background: var(--skin-color);
       }
 
-      /* FACE DETAILS */
       .eye {
         position: absolute;
         width: 10px;
@@ -195,7 +192,7 @@
         border-radius: 4px;
       }
 
-      /* HAIR (64x20x64 - slightly larger than head) */
+      /* HAIR */
       .hair {
         width: 64px;
         height: 20px;
@@ -203,28 +200,27 @@
         --width-half: 32px;
         --height-half: 10px;
         --depth-half: 32px;
-        /* Positioned on top of head */
         transform: translateY(-115px);
       }
       .hair .face {
         background: var(--hair-color);
       }
 
-      /* BODY (60x80x30) */
+      /* BODY (Slightly thicker now to look solid) */
       .body {
         width: 60px;
         height: 80px;
-        --depth: 30px;
+        --depth: 40px;
         --width-half: 30px;
         --height-half: 40px;
-        --depth-half: 15px;
+        --depth-half: 20px;
         transform: translateY(-20px);
       }
       .body .face {
         background: var(--shirt-color);
       }
 
-      /* ARMS (20x70x20) */
+      /* ARMS (Fixed Positioning: 40px instead of 45px) */
       .arm {
         width: 20px;
         height: 70px;
@@ -237,21 +233,21 @@
       .arm .face {
         background: var(--skin-color);
       }
-      /* Shoulder sleeves */
       .arm .face.top,
       .arm .face.top + .face {
         background: var(--shirt-color);
         height: 20px;
       }
 
+      /* FIXED: Moved from 45px to 40px to close gap */
       .arm.left {
-        transform: translate(-45px, -20px);
+        transform: translate(-40px, -20px);
       }
       .arm.right {
-        transform: translate(45px, -20px);
+        transform: translate(40px, -20px);
       }
 
-      /* LEGS (25x70x25) */
+      /* LEGS */
       .leg {
         width: 25px;
         height: 70px;
@@ -271,9 +267,8 @@
         transform: translate(16px, 55px);
       }
 
-      /* --- ANIMATIONS --- */
+      /* --- ANIMATIONS (UPDATED WITH FIXES) --- */
 
-      /* Toggle class to start animation */
       .walking .leg.left {
         animation: walk-leg-l 0.8s infinite ease-in-out alternate;
       }
@@ -309,20 +304,21 @@
         }
       }
 
+      /* FIXED: Animation updated to use 40px */
       @keyframes walk-arm-l {
         from {
-          transform: translate(-45px, -20px) rotateX(-25deg);
+          transform: translate(-40px, -20px) rotateX(-25deg);
         }
         to {
-          transform: translate(-45px, -20px) rotateX(25deg);
+          transform: translate(-40px, -20px) rotateX(25deg);
         }
       }
       @keyframes walk-arm-r {
         from {
-          transform: translate(45px, -20px) rotateX(25deg);
+          transform: translate(40px, -20px) rotateX(25deg);
         }
         to {
-          transform: translate(45px, -20px) rotateX(-25deg);
+          transform: translate(40px, -20px) rotateX(-25deg);
         }
       }
 
@@ -334,7 +330,6 @@
           transform: translateY(-22px);
         }
       }
-      /* Separate bounce for head/hair relative to their specific start points */
       .walking .head {
         animation: head-bounce 0.4s infinite ease-in-out alternate;
       }
@@ -362,7 +357,7 @@
   </head>
   <body>
     <div id="sidebar">
-      <h3>Avatar V2</h3>
+      <h3>Avatar Editor</h3>
       <p style="font-size: 12px; color: #777">Drag to Rotate</p>
 
       <div class="control">

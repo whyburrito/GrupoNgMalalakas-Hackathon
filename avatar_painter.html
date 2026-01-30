@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Avatar Mask Painter</title>
+    <style>
+      :root {
+        --bg-color: #e0e0e0;
+        --sidebar-width: 300px;
+        /* Avatar Colors */
+        --skin-color: #ffcc99;
+        --shirt-color: #3498db;
+        --pants-color: #2c3e50;
+        --mask-color: #333;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        height: 100vh;
+        background-color: #ccc;
+      }
+
+      /* SIDEBAR */
+      #sidebar {
+        width: var(--sidebar-width);
+        background: #fff;
+        padding: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto;
+      }
+
+      h3 {
+        margin: 0 0 5px 0;
+        color: #333;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 5px;
+      }
+      .section-title {
+        font-size: 12px;
+        font-weight: bold;
+        color: #888;
+        text-transform: uppercase;
+        margin-top: 10px;
+      }
+
+      label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: #555;
+      }
+      input[type="color"] {
+        border: none;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+      }
+      select,
+      input[type="range"] {
+        width: 60%;
+      }
+      button {
+        padding: 10px;
+        cursor: pointer;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-top: 5px;
+      }
+
+      /* CANVAS AREA */
+      #canvasContainer {
+        flex-grow: 1;
+        position: relative;
+        cursor: crosshair;
+        background: #ffffff;
+        background-image: radial-gradient(#ddd 1px, transparent 1px);
+        background-size: 20px 20px;
+        overflow: hidden;
+      }
+
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* --- THE AVATAR (Miniature Mode) --- */
+      #avatarWrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none; /* KEY: Allows clicking THROUGH the avatar to draw */
+        transform-style: preserve-3d;
+        z-index: 100;
+        transition: transform 0.1s linear; /* Smooth follow */
+      }
+
+      /* Scale down the avatar logic for the cursor */
+      #pivot {
+        transform-style: preserve-3d;
+        transform: scale(0.4) rotateX(-20deg) rotateY(25deg); /* Mini Avatar */
+      }
+
+      /* 3D CUBE STYLES */
+      .cuboid {
+        position: absolute;
+        transform-style: preserve-3d;
+      }
+      .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+      .face.front {
+        transform: translateZ(var(--d-half));
+        filter: brightness(100%);
+      }
+      .face.back {
+        transform: rotateY(180deg) translateZ(var(--d-half));
+        filter: brightness(70%);
+      }
+      .face.right {
+        transform: rotateY(90deg) translateZ(var(--w-half));
+        width: var(--d);
+        left: calc(var(--w-half) - var(--d-half));
+        filter: brightness(85%);
+      }
+      .face.left {
+        transform: rotateY(-90deg) translateZ(var(--w-half));
+        width: var(--d);
+        left: calc(var(--w-half) - var(--d-half));
+        filter: brightness(85%);
+      }
+      .face.top {
+        transform: rotateX(90deg) translateZ(var(--h-half));
+        height: var(--d);
+        top: calc(var(--h-half) - var(--d-half));
+        filter: brightness(110%);
+      }
+      .face.bottom {
+        transform: rotateX(-90deg) translateZ(var(--h-half));
+        height: var(--d);
+        top: calc(var(--h-half) - var(--d-half));
+        filter: brightness(50%);
+      }
+
+      /* AVATAR PARTS (Simplified dimensions) */
+      .head {
+        width: 60px;
+        height: 60px;
+        --d: 60px;
+        --w-half: 30px;
+        --h-half: 30px;
+        --d-half: 30px;
+        transform: translateY(-90px);
+      }
+      .head .face {
+        background: var(--skin-color);
+      }
+      .body {
+        width: 60px;
+        height: 80px;
+        --d: 40px;
+        --w-half: 30px;
+        --h-half: 40px;
+        --d-half: 20px;
+        transform: translateY(-20px);
+      }
+      .body .face {
+        background: var(--shirt-color);
+      }
+      .arm {
+        width: 20px;
+        height: 70px;
+        --d: 20px;
+        --w-half: 10px;
+        --h-half: 35px;
+        --d-half: 10px;
+        transform-origin: 50% 10px;
+      }
+      .arm .face {
+        background: var(--skin-color);
+      }
+      .arm .face.top,
+      .arm .face.top + .face {
+        background: var(--shirt-color);
+        height: 20px;
+      }
+      .leg {
+        width: 25px;
+        height: 70px;
+        --d: 25px;
+        --w-half: 12.5px;
+        --h-half: 35px;
+        --d-half: 12.5px;
+        transform-origin: 50% 0;
+      }
+      .leg .face {
+        background: var(--pants-color);
+      }
+
+      /* Position Parts */
+      .arm.left {
+        transform: translate(-40px, -20px);
+      }
+      .arm.right {
+        transform: translate(40px, -20px);
+      } /* Right arm holds brush */
+      .leg.left {
+        transform: translate(-16px, 55px);
+      }
+      .leg.right {
+        transform: translate(16px, 55px);
+      }
+
+      /* Eyes */
+      .eye {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #222;
+        transform: translateZ(31px);
+      }
+      .eye.left {
+        top: 22px;
+        left: 12px;
+      }
+      .eye.right {
+        top: 22px;
+        right: 12px;
+      }
+
+      /* MASK DISGUISES */
+      .mask-ninja .face.front::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: var(--mask-color);
+      }
+      .mask-hero .face.front::before {
+        content: "";
+        position: absolute;
+        top: 15px;
+        left: 0;
+        width: 100%;
+        height: 25px;
+        background: var(--mask-color);
+      }
+
+      /* BRUSH TOOL (Attached to Right Arm) */
+      .brush {
+        position: absolute;
+        width: 10px;
+        height: 80px;
+        background: #8e44ad;
+        transform: translateZ(10px) translateY(40px) rotateX(90deg);
+      }
+
+      /* ANIMATIONS */
+      .walking .leg.left {
+        animation: walk 0.4s infinite alternate;
+      }
+      .walking .leg.right {
+        animation: walk 0.4s infinite alternate-reverse;
+      }
+      .walking .arm.left {
+        animation: swing 0.4s infinite alternate;
+      }
+      /* Right arm is stiff because it's holding the brush */
+      .walking .arm.right {
+        transform: translate(40px, -20px) rotateX(-45deg);
+      }
+      .walking .body {
+        animation: bounce 0.2s infinite alternate;
+      }
+
+      @keyframes walk {
+        from {
+          transform: translate(-16px, 55px) rotateX(25deg);
+        }
+        to {
+          transform: translate(-16px, 55px) rotateX(-25deg);
+        }
+      }
+      @keyframes swing {
+        from {
+          transform: translate(-40px, -20px) rotateX(-25deg);
+        }
+        to {
+          transform: translate(-40px, -20px) rotateX(25deg);
+        }
+      }
+      @keyframes bounce {
+        from {
+          transform: translateY(-20px);
+        }
+        to {
+          transform: translateY(-22px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sidebar">
+      <h3>Disguise Painter</h3>
+
+      <div class="section-title">Brush Settings</div>
+      <label
+        >Color: <input type="color" id="brushColor" value="#ff0000"
+      /></label>
+      <label
+        >Size: <input type="range" id="brushSize" min="5" max="50" value="10"
+      /></label>
+      <label
+        >Shape:
+        <select id="brushShape">
+          <option value="round">Circle</option>
+          <option value="square">Square</option>
+        </select>
+      </label>
+
+      <div class="section-title">Avatar Disguise</div>
+      <label
+        >Mask Type:
+        <select id="maskSelect">
+          <option value="none">None</option>
+          <option value="mask-ninja">Ninja</option>
+          <option value="mask-hero">Hero</option>
+        </select>
+      </label>
+      <label
+        >Mask/Suit: <input type="color" id="maskColorInp" value="#333333"
+      /></label>
+      <label>Skin: <input type="color" id="skinColor" value="#ffcc99" /></label>
+      <label
+        >Shirt: <input type="color" id="shirtColor" value="#3498db"
+      /></label>
+
+      <button
+        onclick="clearCanvas()"
+        style="background: #ffcccc; color: #c0392b"
+      >
+        Clear Canvas
+      </button>
+      <button
+        onclick="downloadCanvas()"
+        style="background: #ccffcc; color: #27ae60"
+      >
+        Download Art
+      </button>
+
+      <p style="font-size: 11px; color: #777; margin-top: 20px">
+        The Avatar follows your mouse. Click and drag to paint and watch him
+        walk!
+      </p>
+    </div>
+
+    <div id="canvasContainer">
+      <div id="avatarWrapper">
+        <div id="pivot">
+          <div class="cuboid head">
+            <div class="face front">
+              <div class="eye left"></div>
+              <div class="eye right"></div>
+            </div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+          </div>
+          <div class="cuboid body">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+          </div>
+          <div class="cuboid arm left">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+          </div>
+          <div class="cuboid arm right">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+            <div class="brush"></div>
+          </div>
+          <div class="cuboid leg left">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+          </div>
+          <div class="cuboid leg right">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+          </div>
+        </div>
+      </div>
+
+      <canvas id="maskCanvas"></canvas>
+    </div>
+
+    <script>
+      // --- 1. SETUP CANVAS ---
+      const canvas = document.getElementById("maskCanvas");
+      const ctx = canvas.getContext("2d");
+      const container = document.getElementById("canvasContainer");
+
+      // Resize canvas to fill container
+      function resize() {
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize(); // Initial call
+
+      // --- 2. SETUP AVATAR & MOUSE TRACKING ---
+      const avatarWrapper = document.getElementById("avatarWrapper");
+      const pivot = document.getElementById("pivot");
+
+      let isDrawing = false;
+
+      // Update Avatar Position
+      container.addEventListener("mousemove", (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Move Avatar (Offset slightly so it stands NEXT to the brush)
+        avatarWrapper.style.transform = `translate(${x - 10}px, ${y - 40}px)`;
+
+        if (isDrawing) draw(x, y);
+      });
+
+      // Drawing Events
+      container.addEventListener("mousedown", (e) => {
+        isDrawing = true;
+        pivot.classList.add("walking"); // Start animation
+
+        const rect = container.getBoundingClientRect();
+        draw(e.clientX - rect.left, e.clientY - rect.top);
+      });
+
+      window.addEventListener("mouseup", () => {
+        isDrawing = false;
+        pivot.classList.remove("walking"); // Stop animation
+        ctx.beginPath(); // Reset path
+      });
+
+      // --- 3. DRAWING LOGIC ---
+      const brushColor = document.getElementById("brushColor");
+      const brushSize = document.getElementById("brushSize");
+      const brushShape = document.getElementById("brushShape");
+
+      function draw(x, y) {
+        ctx.lineWidth = brushSize.value;
+        ctx.lineCap = brushShape.value === "round" ? "round" : "butt";
+        ctx.strokeStyle = brushColor.value;
+        ctx.fillStyle = brushColor.value; // For square fill
+
+        if (brushShape.value === "square") {
+          // Square drawing is manual filling
+          const s = brushSize.value;
+          ctx.fillRect(x - s / 2, y - s / 2, s, s);
+        } else {
+          // Round drawing is standard lines
+          ctx.lineTo(x, y);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+        }
+      }
+
+      // --- 4. AVATAR CUSTOMIZATION ---
+      const root = document.documentElement;
+
+      document
+        .getElementById("skinColor")
+        .addEventListener("input", (e) =>
+          root.style.setProperty("--skin-color", e.target.value),
+        );
+      document
+        .getElementById("shirtColor")
+        .addEventListener("input", (e) =>
+          root.style.setProperty("--shirt-color", e.target.value),
+        );
+      document
+        .getElementById("maskColorInp")
+        .addEventListener("input", (e) =>
+          root.style.setProperty("--mask-color", e.target.value),
+        );
+
+      // Mask Toggle
+      const head = document.querySelector(".head");
+      document.getElementById("maskSelect").addEventListener("change", (e) => {
+        head.className = "cuboid head " + e.target.value;
+      });
+
+      // Brush Visual Update (Make the avatar hold the correct color brush)
+      const brushVisual = document.querySelector(".brush");
+      brushColor.addEventListener("input", (e) => {
+        brushVisual.style.background = e.target.value;
+      });
+
+      // --- 5. BUTTONS ---
+      window.clearCanvas = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      };
+
+      window.downloadCanvas = () => {
+        const link = document.createElement("a");
+        link.download = "my-disguise-art.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      };
+    </script>
+  </body>
+</html>
