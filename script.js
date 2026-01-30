@@ -12,7 +12,7 @@ let actionsUsed = parseInt(localStorage.getItem("actionsUsed")) || 0;
 updateStatus();
 
 const mask = new Image();
-mask.src = "mask.png"; // Your mask PNG
+mask.src = "mask.png"; // your mask image
 mask.onload = () => {
   drawCanvas();
   loadCanvas();
@@ -20,19 +20,16 @@ mask.onload = () => {
 
 // --- Shape storage ---
 let shapeStack = []; // {type, x, y, size, color}
-let draggingShape = null; // for canvas dragging
-let selectedShapeIndex = null;
-let resizing = false;
+let draggingShape = null;
 
-// --- Update preview shape ---
+// --- Draw preview ---
 function drawPreview() {
+  shapePreview.innerHTML = ""; // clear
   const type = shapeSelect.value;
   const color = colorPicker.value;
-  shapePreview.innerHTML = ""; // clear
   const div = document.createElement("div");
   div.style.width = "50px";
   div.style.height = "50px";
-  div.style.backgroundColor = type === "triangle" ? "transparent" : color;
   div.style.position = "relative";
 
   if (type === "circle") {
@@ -54,7 +51,7 @@ drawPreview();
 shapeSelect.addEventListener("change", drawPreview);
 colorPicker.addEventListener("input", drawPreview);
 
-// --- Drag from preview onto canvas ---
+// --- Drag & Drop ---
 shapePreview.addEventListener("mousedown", (e) => {
   if (actionsUsed >= maxActions) return alert("Daily limit reached!");
   draggingShape = {
@@ -66,27 +63,33 @@ shapePreview.addEventListener("mousedown", (e) => {
   };
 });
 
-canvas.addEventListener("mousemove", (e) => {
+document.addEventListener("mousemove", (e) => {
   if (!draggingShape) return;
-  const [x, y] = getMousePos(e);
-  draggingShape.x = x;
-  draggingShape.y = y;
+  const rect = canvas.getBoundingClientRect();
+  draggingShape.x = e.clientX - rect.left;
+  draggingShape.y = e.clientY - rect.top;
   drawCanvas();
-  // Draw the dragging shape semi-transparent
+  // Draw semi-transparent dragging shape
   ctx.globalAlpha = 0.5;
   drawShape(draggingShape);
   ctx.globalAlpha = 1;
 });
 
-canvas.addEventListener("mouseup", (e) => {
+document.addEventListener("mouseup", (e) => {
   if (!draggingShape) return;
-  const [x, y] = getMousePos(e);
-  draggingShape.x = x;
-  draggingShape.y = y;
-  shapeStack.push(draggingShape);
-  actionsUsed++;
-  localStorage.setItem("actionsUsed", actionsUsed);
-  updateStatus();
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  // Only drop if inside canvas
+  if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
+    draggingShape.x = x;
+    draggingShape.y = y;
+    shapeStack.push(draggingShape);
+    actionsUsed++;
+    localStorage.setItem("actionsUsed", actionsUsed);
+    updateStatus();
+  }
   draggingShape = null;
   drawCanvas();
 });
@@ -109,13 +112,13 @@ function drawCanvas() {
   shapeStack.forEach(drawShape);
 }
 
-// --- Draw a single shape ---
+// --- Draw shape ---
 function drawShape(shape) {
   const s = shape.size;
   ctx.fillStyle = shape.color;
+  ctx.beginPath();
   switch (shape.type) {
     case "circle":
-      ctx.beginPath();
       ctx.arc(shape.x, shape.y, s / 2, 0, Math.PI * 2);
       ctx.fill();
       break;
@@ -123,7 +126,6 @@ function drawShape(shape) {
       ctx.fillRect(shape.x - s / 2, shape.y - s / 2, s, s);
       break;
     case "triangle":
-      ctx.beginPath();
       ctx.moveTo(shape.x, shape.y - s / 2);
       ctx.lineTo(shape.x - s / 2, shape.y + s / 2);
       ctx.lineTo(shape.x + s / 2, shape.y + s / 2);
@@ -150,9 +152,4 @@ function loadCanvas() {
 // --- Helpers ---
 function updateStatus() {
   status.innerText = `Actions left today: ${Math.max(maxActions - actionsUsed, 0)}`;
-}
-
-function getMousePos(e) {
-  const rect = canvas.getBoundingClientRect();
-  return [e.clientX - rect.left, e.clientY - rect.top];
 }
