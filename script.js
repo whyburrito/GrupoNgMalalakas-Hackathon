@@ -144,8 +144,13 @@ saveBtn.addEventListener("click", () => {
 });
 
 function loadCanvas() {
-  const savedShapes = JSON.parse(localStorage.getItem("shapeStack")) || [];
-  shapeStack = savedShapes;
+  try {
+    const savedShapes = JSON.parse(localStorage.getItem("shapeStack") || "[]");
+    shapeStack = savedShapes;
+  } catch (e) {
+    console.error("Error loading shapes:", e);
+    shapeStack = [];
+  }
   drawCanvas();
 }
 
