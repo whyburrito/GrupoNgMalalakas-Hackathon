@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animated Block Avatar</title>
+    <style>
+      :root {
+        --bg-color: #f0f4f8;
+        --sidebar-width: 280px;
+
+        /* Dynamic Colors */
+        --skin-color: #ffcc99;
+        --shirt-color: #3498db;
+        --pants-color: #2c3e50;
+        --hair-color: #5d4037;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: "Segoe UI", sans-serif;
+        background: var(--bg-color);
+        display: flex;
+        height: 100vh;
+      }
+
+      /* SIDEBAR */
+      #sidebar {
+        width: var(--sidebar-width);
+        background: white;
+        padding: 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        overflow-y: auto;
+      }
+
+      h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+      }
+
+      .control {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+      }
+
+      label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 5px;
+      }
+
+      input[type="color"] {
+        border: none;
+        width: 40px;
+        height: 30px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      input[type="range"] {
+        width: 100%;
+        cursor: pointer;
+      }
+      input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+
+      /* SCENE */
+      #scene {
+        flex-grow: 1;
+        perspective: 800px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: grab;
+        background-image: radial-gradient(#d1d8e0 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+
+      #scene:active {
+        cursor: grabbing;
+      }
+
+      /* PIVOT & ANIMATION CONTAINER */
+      #pivot {
+        transform-style: preserve-3d;
+        transform: rotateX(-15deg) rotateY(30deg);
+        width: 0;
+        height: 0;
+        position: relative;
+      }
+
+      /* GENERIC CUBOID LOGIC */
+      .cuboid {
+        position: absolute;
+        transform-style: preserve-3d;
+      }
+
+      .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        /* Border prevents "bleeding" pixels at edges */
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+      }
+
+      /* FAKE LIGHTING (CSS Filters) */
+      .face.front {
+        transform: translateZ(var(--depth-half));
+        filter: brightness(100%);
+      }
+      .face.back {
+        transform: rotateY(180deg) translateZ(var(--depth-half));
+        filter: brightness(70%);
+      }
+      .face.right {
+        transform: rotateY(90deg) translateZ(var(--width-half));
+        width: var(--depth);
+        left: calc(var(--width-half) - var(--depth-half));
+        filter: brightness(85%);
+      }
+      .face.left {
+        transform: rotateY(-90deg) translateZ(var(--width-half));
+        width: var(--depth);
+        left: calc(var(--width-half) - var(--depth-half));
+        filter: brightness(85%);
+      }
+      .face.top {
+        transform: rotateX(90deg) translateZ(var(--height-half));
+        height: var(--depth);
+        top: calc(var(--height-half) - var(--depth-half));
+        filter: brightness(110%);
+      }
+      .face.bottom {
+        transform: rotateX(-90deg) translateZ(var(--height-half));
+        height: var(--depth);
+        top: calc(var(--height-half) - var(--depth-half));
+        filter: brightness(50%);
+      }
+
+      /* --- CHARACTER PARTS --- */
+
+      /* HEAD (60x60x60) */
+      .head {
+        width: 60px;
+        height: 60px;
+        --depth: 60px;
+        --width-half: 30px;
+        --height-half: 30px;
+        --depth-half: 30px;
+        transform: translateY(-90px);
+        z-index: 10;
+      }
+      .head .face {
+        background: var(--skin-color);
+      }
+
+      /* FACE DETAILS */
+      .eye {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #222;
+        transform: translateZ(31px);
+      }
+      .eye.left {
+        top: 22px;
+        left: 12px;
+      }
+      .eye.right {
+        top: 22px;
+        right: 12px;
+      }
+
+      .mouth {
+        position: absolute;
+        width: 20px;
+        height: 6px;
+        background: #a25e5e;
+        top: 42px;
+        left: 20px;
+        transform: translateZ(31px);
+        border-radius: 4px;
+      }
+
+      /* HAIR (64x20x64 - slightly larger than head) */
+      .hair {
+        width: 64px;
+        height: 20px;
+        --depth: 64px;
+        --width-half: 32px;
+        --height-half: 10px;
+        --depth-half: 32px;
+        /* Positioned on top of head */
+        transform: translateY(-115px);
+      }
+      .hair .face {
+        background: var(--hair-color);
+      }
+
+      /* BODY (60x80x30) */
+      .body {
+        width: 60px;
+        height: 80px;
+        --depth: 30px;
+        --width-half: 30px;
+        --height-half: 40px;
+        --depth-half: 15px;
+        transform: translateY(-20px);
+      }
+      .body .face {
+        background: var(--shirt-color);
+      }
+
+      /* ARMS (20x70x20) */
+      .arm {
+        width: 20px;
+        height: 70px;
+        --depth: 20px;
+        --width-half: 10px;
+        --height-half: 35px;
+        --depth-half: 10px;
+        transform-origin: 50% 10px; /* Pivot at shoulder */
+      }
+      .arm .face {
+        background: var(--skin-color);
+      }
+      /* Shoulder sleeves */
+      .arm .face.top,
+      .arm .face.top + .face {
+        background: var(--shirt-color);
+        height: 20px;
+      }
+
+      .arm.left {
+        transform: translate(-45px, -20px);
+      }
+      .arm.right {
+        transform: translate(45px, -20px);
+      }
+
+      /* LEGS (25x70x25) */
+      .leg {
+        width: 25px;
+        height: 70px;
+        --depth: 25px;
+        --width-half: 12.5px;
+        --height-half: 35px;
+        --depth-half: 12.5px;
+        transform-origin: 50% 0; /* Pivot at hip */
+      }
+      .leg .face {
+        background: var(--pants-color);
+      }
+      .leg.left {
+        transform: translate(-16px, 55px);
+      }
+      .leg.right {
+        transform: translate(16px, 55px);
+      }
+
+      /* --- ANIMATIONS --- */
+
+      /* Toggle class to start animation */
+      .walking .leg.left {
+        animation: walk-leg-l 0.8s infinite ease-in-out alternate;
+      }
+      .walking .leg.right {
+        animation: walk-leg-r 0.8s infinite ease-in-out alternate;
+      }
+      .walking .arm.left {
+        animation: walk-arm-l 0.8s infinite ease-in-out alternate;
+      }
+      .walking .arm.right {
+        animation: walk-arm-r 0.8s infinite ease-in-out alternate;
+      }
+      .walking .body,
+      .walking .head,
+      .walking .hair {
+        animation: bounce 0.4s infinite ease-in-out alternate;
+      }
+
+      @keyframes walk-leg-l {
+        from {
+          transform: translate(-16px, 55px) rotateX(25deg);
+        }
+        to {
+          transform: translate(-16px, 55px) rotateX(-25deg);
+        }
+      }
+      @keyframes walk-leg-r {
+        from {
+          transform: translate(16px, 55px) rotateX(-25deg);
+        }
+        to {
+          transform: translate(16px, 55px) rotateX(25deg);
+        }
+      }
+
+      @keyframes walk-arm-l {
+        from {
+          transform: translate(-45px, -20px) rotateX(-25deg);
+        }
+        to {
+          transform: translate(-45px, -20px) rotateX(25deg);
+        }
+      }
+      @keyframes walk-arm-r {
+        from {
+          transform: translate(45px, -20px) rotateX(25deg);
+        }
+        to {
+          transform: translate(45px, -20px) rotateX(-25deg);
+        }
+      }
+
+      @keyframes bounce {
+        from {
+          transform: translateY(-20px);
+        }
+        to {
+          transform: translateY(-22px);
+        }
+      }
+      /* Separate bounce for head/hair relative to their specific start points */
+      .walking .head {
+        animation: head-bounce 0.4s infinite ease-in-out alternate;
+      }
+      .walking .hair {
+        animation: hair-bounce 0.4s infinite ease-in-out alternate;
+      }
+
+      @keyframes head-bounce {
+        from {
+          transform: translateY(-90px);
+        }
+        to {
+          transform: translateY(-92px);
+        }
+      }
+      @keyframes hair-bounce {
+        from {
+          transform: translateY(-115px);
+        }
+        to {
+          transform: translateY(-117px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sidebar">
+      <h3>Avatar V2</h3>
+      <p style="font-size: 12px; color: #777">Drag to Rotate</p>
+
+      <div class="control">
+        <label>Walk Animation <input type="checkbox" id="walkCheck" /></label>
+      </div>
+
+      <div class="control">
+        <label>Skin <input type="color" id="skinInp" value="#ffcc99" /></label>
+        <label>Hair <input type="color" id="hairInp" value="#5d4037" /></label>
+      </div>
+
+      <div class="control">
+        <label
+          >Shirt <input type="color" id="shirtInp" value="#3498db"
+        /></label>
+        <label
+          >Pants <input type="color" id="pantsInp" value="#2c3e50"
+        /></label>
+      </div>
+
+      <div class="control">
+        <label>Zoom</label>
+        <input
+          type="range"
+          id="zoomInp"
+          min="0.5"
+          max="2"
+          step="0.1"
+          value="1"
+        />
+      </div>
+
+      <button
+        id="resetBtn"
+        style="padding: 10px; cursor: pointer; margin-top: 10px"
+      >
+        Reset View
+      </button>
+    </div>
+
+    <div id="scene">
+      <div id="pivot">
+        <div class="cuboid hair">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face left"></div>
+          <div class="face right"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+
+        <div class="cuboid head">
+          <div class="face front">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+            <div class="mouth"></div>
+          </div>
+          <div class="face back"></div>
+          <div class="face left"></div>
+          <div class="face right"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+
+        <div class="cuboid body">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face left"></div>
+          <div class="face right"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+
+        <div class="cuboid arm left">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face left"></div>
+          <div class="face right"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+        <div class="cuboid arm right">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face left"></div>
+          <div class="face right"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+
+        <div class="cuboid leg left">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face left"></div>
+          <div class="face right"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+        <div class="cuboid leg right">
+          <div class="face front"></div>
+          <div class="face back"></div>
+          <div class="face left"></div>
+          <div class="face right"></div>
+          <div class="face top"></div>
+          <div class="face bottom"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const root = document.documentElement;
+
+      // --- COLOR UPDATES ---
+      const inputs = {
+        skin: "skinInp",
+        hair: "hairInp",
+        shirt: "shirtInp",
+        pants: "pantsInp",
+      };
+
+      for (const [key, id] of Object.entries(inputs)) {
+        document.getElementById(id).addEventListener("input", (e) => {
+          root.style.setProperty(`--${key}-color`, e.target.value);
+        });
+      }
+
+      // --- WALK TOGGLE ---
+      document.getElementById("walkCheck").addEventListener("change", (e) => {
+        const pivot = document.getElementById("pivot");
+        if (e.target.checked) {
+          pivot.classList.add("walking");
+        } else {
+          pivot.classList.remove("walking");
+        }
+      });
+
+      // --- ZOOM ---
+      document.getElementById("zoomInp").addEventListener("input", (e) => {
+        document.getElementById("pivot").style.scale = e.target.value;
+      });
+
+      // --- ROTATION ---
+      const scene = document.getElementById("scene");
+      const pivot = document.getElementById("pivot");
+
+      let isDragging = false;
+      let startX, startY;
+      let rotX = -15;
+      let rotY = 30;
+
+      scene.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+
+      window.addEventListener("mouseup", () => (isDragging = false));
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        rotY += deltaX * 0.5;
+        rotX -= deltaY * 0.5;
+        // Clamp Look Up/Down
+        rotX = Math.max(-90, Math.min(90, rotX));
+
+        pivot.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        startX = e.clientX;
+        startY = e.clientY;
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        rotX = -15;
+        rotY = 30;
+        pivot.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      });
+    </script>
+  </body>
+</html>
