@@ -2,6 +2,10 @@ const canvas = document.getElementById("maskCanvas");
 const ctx = canvas.getContext("2d");
 const shapeSelect = document.getElementById("shapeSelect");
 const colorPicker = document.getElementById("colorPicker");
+const sizeSlider = document.getElementById("sizeSlider");
+const sizeValue = document.getElementById("sizeValue");
+const rotationSlider = document.getElementById("rotationSlider"); // NEW
+const rotationValue = document.getElementById("rotationValue");   // NEW
 const undoBtn = document.getElementById("undoBtn");
 const saveBtn = document.getElementById("saveBtn");
 const status = document.getElementById("status");
@@ -9,31 +13,32 @@ const shapePreview = document.getElementById("shapePreview");
 
 let maxActions = 3;
 let actionsUsed = parseInt(localStorage.getItem("actionsUsed")) || 0;
+let lastMousePos = { x: 0, y: 0 };
+let isMouseOver = false;
+
 updateStatus();
 
 const mask = new Image();
-mask.src = "mask.png"; // Your mask PNG
+mask.src = "mask.png";
 mask.onload = () => {
   drawCanvas();
   loadCanvas();
 };
 
 // --- Shape storage ---
-let shapeStack = []; // {type, x, y, size, color}
-let draggingShape = null; // for canvas dragging
-let selectedShapeIndex = null;
-let resizing = false;
+let shapeStack = []; 
 
-// --- Update preview shape ---
-function drawPreview() {
+// --- Update sidebar icon (Static preview) ---
+function drawSidebarPreview() {
   const type = shapeSelect.value;
   const color = colorPicker.value;
-  shapePreview.innerHTML = ""; // clear
+  shapePreview.innerHTML = "";
   const div = document.createElement("div");
-  div.style.width = "50px";
+  div.style.width = "50px"; 
   div.style.height = "50px";
-  div.style.backgroundColor = type === "triangle" ? "transparent" : color;
   div.style.position = "relative";
+  // Apply rotation to sidebar preview too for clarity
+  div.style.transform = `rotate(${rotationSlider.value}deg)`; 
 
   if (type === "circle") {
     div.style.borderRadius = "50%";
@@ -47,52 +52,107 @@ function drawPreview() {
   } else {
     div.style.backgroundColor = color;
   }
-
   shapePreview.appendChild(div);
 }
-drawPreview();
-shapeSelect.addEventListener("change", drawPreview);
-colorPicker.addEventListener("input", drawPreview);
 
-// --- Drag from preview onto canvas ---
-shapePreview.addEventListener("mousedown", (e) => {
-  if (actionsUsed >= maxActions) return alert("Daily limit reached!");
-  draggingShape = {
-    type: shapeSelect.value,
-    color: colorPicker.value,
-    size: 50,
-    x: 0,
-    y: 0,
-  };
+drawSidebarPreview();
+
+// --- Event Listeners for Controls ---
+function updateControlState() {
+  drawSidebarPreview();
+  if(isMouseOver) drawGhost(lastMousePos.x, lastMousePos.y);
+}
+
+shapeSelect.addEventListener("change", updateControlState);
+colorPicker.addEventListener("input", updateControlState);
+
+sizeSlider.addEventListener("input", (e) => {
+  sizeValue.innerText = e.target.value;
+  updateControlState();
 });
+
+rotationSlider.addEventListener("input", (e) => {
+  rotationValue.innerText = e.target.value;
+  updateControlState();
+});
+
+// --- Keyboard Shortcuts (Ctrl+Z) ---
+window.addEventListener("keydown", (e) => {
+  // Check for Ctrl+Z (Windows) or Cmd+Z (Mac)
+  if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+    e.preventDefault(); // Stop browser undo
+    performUndo();
+  }
+});
+
+
+// --- Canvas Interaction ---
 
 canvas.addEventListener("mousemove", (e) => {
-  if (!draggingShape) return;
   const [x, y] = getMousePos(e);
-  draggingShape.x = x;
-  draggingShape.y = y;
-  drawCanvas();
-  // Draw the dragging shape semi-transparent
-  ctx.globalAlpha = 0.5;
-  drawShape(draggingShape);
-  ctx.globalAlpha = 1;
+  lastMousePos = { x, y };
+  isMouseOver = true;
+  drawGhost(x, y);
 });
 
-canvas.addEventListener("mouseup", (e) => {
-  if (!draggingShape) return;
+canvas.addEventListener("mouseleave", () => {
+  isMouseOver = false;
+  drawCanvas();
+});
+
+canvas.addEventListener("click", (e) => {
+  if (actionsUsed >= maxActions) {
+    alert("Daily limit reached!");
+    return;
+  }
+
   const [x, y] = getMousePos(e);
-  draggingShape.x = x;
-  draggingShape.y = y;
-  shapeStack.push(draggingShape);
+  const currentSize = parseInt(sizeSlider.value);
+  const currentRotation = parseInt(rotationSlider.value);
+
+  const newShape = {
+    type: shapeSelect.value,
+    color: colorPicker.value,
+    size: currentSize,
+    rotation: currentRotation, // Save rotation
+    x: x,
+    y: y,
+  };
+
+  shapeStack.push(newShape);
   actionsUsed++;
   localStorage.setItem("actionsUsed", actionsUsed);
   updateStatus();
-  draggingShape = null;
-  drawCanvas();
+
+  drawCanvas(); 
+  if (actionsUsed < maxActions) {
+    drawGhost(x, y);
+  }
 });
 
-// --- Undo ---
-undoBtn.addEventListener("click", () => {
+// --- Helper: Draw Ghost ---
+function drawGhost(x, y) {
+  drawCanvas(); 
+
+  if (actionsUsed < maxActions) {
+    const currentSize = parseInt(sizeSlider.value);
+    const currentRotation = parseInt(rotationSlider.value);
+    
+    ctx.globalAlpha = 0.5;
+    drawShape({
+      type: shapeSelect.value,
+      color: colorPicker.value,
+      size: currentSize,
+      rotation: currentRotation,
+      x: x,
+      y: y
+    });
+    ctx.globalAlpha = 1.0;
+  }
+}
+
+// --- Undo Logic ---
+function performUndo() {
   if (shapeStack.length === 0) return;
   shapeStack.pop();
   actionsUsed--;
@@ -100,37 +160,55 @@ undoBtn.addEventListener("click", () => {
   localStorage.setItem("actionsUsed", actionsUsed);
   updateStatus();
   drawCanvas();
-});
+  // If mouse is still over canvas, redraw ghost immediately
+  if(isMouseOver) drawGhost(lastMousePos.x, lastMousePos.y);
+}
 
-// --- Draw canvas ---
+undoBtn.addEventListener("click", performUndo);
+
+// --- Draw Full Canvas ---
 function drawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(mask, 0, 0, canvas.width, canvas.height);
+  if (mask.complete && mask.naturalWidth !== 0) {
+    ctx.drawImage(mask, 0, 0, canvas.width, canvas.height);
+  }
   shapeStack.forEach(drawShape);
 }
 
-// --- Draw a single shape ---
+// --- Draw Single Shape (with Rotation) ---
 function drawShape(shape) {
   const s = shape.size;
+  const rad = (shape.rotation || 0) * (Math.PI / 180); // Convert degrees to radians
+
+  ctx.save(); // Save context state (origin, rotation, etc)
+  
+  // 1. Move origin to shape's center
+  ctx.translate(shape.x, shape.y);
+  // 2. Rotate
+  ctx.rotate(rad);
+  
   ctx.fillStyle = shape.color;
+  ctx.beginPath();
+  
+  // 3. Draw shape centered at (0, 0)
   switch (shape.type) {
     case "circle":
-      ctx.beginPath();
-      ctx.arc(shape.x, shape.y, s / 2, 0, Math.PI * 2);
+      ctx.arc(0, 0, s / 2, 0, Math.PI * 2);
       ctx.fill();
       break;
     case "square":
-      ctx.fillRect(shape.x - s / 2, shape.y - s / 2, s, s);
+      ctx.fillRect(-s / 2, -s / 2, s, s);
       break;
     case "triangle":
-      ctx.beginPath();
-      ctx.moveTo(shape.x, shape.y - s / 2);
-      ctx.lineTo(shape.x - s / 2, shape.y + s / 2);
-      ctx.lineTo(shape.x + s / 2, shape.y + s / 2);
+      ctx.moveTo(0, -s / 2);
+      ctx.lineTo(-s / 2, s / 2);
+      ctx.lineTo(s / 2, s / 2);
       ctx.closePath();
       ctx.fill();
       break;
   }
+
+  ctx.restore(); // Restore context to original state for next shape
 }
 
 // --- Save / Load ---
@@ -147,7 +225,6 @@ function loadCanvas() {
   drawCanvas();
 }
 
-// --- Helpers ---
 function updateStatus() {
   status.innerText = `Actions left today: ${Math.max(maxActions - actionsUsed, 0)}`;
 }

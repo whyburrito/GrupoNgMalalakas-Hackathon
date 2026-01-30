@@ -40,5 +40,5 @@ body {
   height: 50px;
   border: 2px dashed #333;
   margin: 10px auto;
-  cursor: grab;
+  cursor: default;
 }
