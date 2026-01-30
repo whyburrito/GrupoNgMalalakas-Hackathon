@@ -7,10 +7,9 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Mask Shape Editor</h1>
     <div id="container">
       <div id="sidebar">
-        <h3>Tools</h3>
+        <h3>Mask Editor</h3>
 
         <label>
           Shape:
@@ -38,12 +37,17 @@
 
         <div id="shapePreview"></div>
 
-        <button id="undoBtn">Undo (Ctrl+Z)</button>
-        <button id="saveBtn">Save Progress</button>
+        <hr />
 
-        <p id="status">Actions left today: 3</p>
+        <button id="undoBtn">Undo (Ctrl+Z)</button>
+        <button id="resetBtn" style="background-color: #ffcccc;">Reset Actions</button>
+        <button id="downloadBtn" style="background-color: #ccffcc;">Download Image</button>
+
+        <hr />
+        <p id="status">Actions left: 3</p>
       </div>
-      <canvas id="maskCanvas" width="600" height="600"></canvas>
+
+      <canvas id="maskCanvas"></canvas>
     </div>
 
     <script src="script.js"></script>
