@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
   <head>
+<<<<<<< Updated upstream
     <title>Aura | Mental Health & Creative Studio</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -308,10 +309,70 @@
           onclick="closeHelpline()"
         >
           I understand, continue
+=======
+    <title>WhiteMask Studio | Journal</title>
+    <link rel="stylesheet" href="../Designs/journalPage.css" />
+  </head>
+  <body>
+    <nav class="app-nav">
+      <div class="nav-brand">WHITEMASK STUDIO</div>
+      <div class="nav-links">
+        <a href="PaintPage.html">PAINT</a>
+        <a href="#" class="active">JOURNAL</a>
+        <a href="#">ANALYSIS</a>
+        <a href="#">SETTINGS</a>
+      </div>
+      <button class="nav-logout">LOGOUT</button>
+    </nav>
+
+    <div id="app-body">
+      <div class="journal-container">
+        <div class="writing-zone">
+          <textarea
+            id="journalInput"
+            placeholder="BEGIN WRITING YOUR REFLECTIONS..."
+            oninput="analyzeJournal()"
+          ></textarea>
+        </div>
+      </div>
+
+      <div id="sidebar-right">
+        <div class="title">HEALTH ANALYZER</div>
+
+        <div id="aiSummaryBox">
+          <div id="aiTitle">DOMINANT EMOTION</div>
+          <div id="text-emotion">NEUTRAL</div>
+          <div id="analysis-results">
+            System standing by. Start typing to begin analysis.
+          </div>
+        </div>
+
+        <div class="health-metrics">
+          <label class="section-label">EMOTIONAL INTENSITY</label>
+          <div class="bar-bg">
+            <div id="intensityBar" class="bar-segment" style="width: 0%"></div>
+          </div>
+
+          <label class="section-label">STABILITY SCORE</label>
+          <div id="stabilityScore" style="font-size: 2.5rem; font-weight: 900">
+            100%
+          </div>
+        </div>
+
+        <div id="hotlineBox">
+          <div class="hotline-title">⚠️ DISTRESS ALERT</div>
+          <p>We've detected high stress levels. Help is available.</p>
+          <span class="hotline-number">CALL/TEXT 988</span>
+        </div>
+
+        <button class="flip-card__btn" style="width: 100%; margin-top: auto">
+          SAVE ENTRY
+>>>>>>> Stashed changes
         </button>
       </div>
     </div>
 
+<<<<<<< Updated upstream
     <script>
       // --- PAGE NAVIGATION ---
       function showPage(id) {
@@ -542,5 +603,8 @@
 
       window.onload = initPaint;
     </script>
+=======
+    <script src="../Scripts/journalPage.js"></script>
+>>>>>>> Stashed changes
   </body>
 </html>
