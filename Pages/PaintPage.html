@@ -4,11 +4,234 @@
     <title>WhiteMask V35 | Exact Color Match</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <link rel="stylesheet" href="../Designs/paintPage.css" />
+    <link rel="stylesheet" href="../Designs/homePage.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      :root {
+        --secondary-color: #505050;
+      }
+      body {
+        overflow: hidden;
+        background-color: #cbd5e1;
+      }
+      /* Sidebar Styling */
+      #sidebar {
+        position: fixed;
+        top: 80px;
+        left: 20px;
+        width: 320px;
+        height: calc(100vh - 90px);
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 5px;
+        overflow-y: auto;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding-bottom: 40px;
+      }
+      #sidebar::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+      }
+      
+      /* Sidebar Cards */
+      .sidebar-card {
+        background: var(--bg-white);
+        border: 2px solid var(--main-color);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: transform 0.2s ease;
+      }
+      .sidebar-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
+      }
+      
+      .sidebar-title-card {
+        background: var(--main-color);
+        color: white;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+      }
+      
+      #sidebar h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: white;
+        margin: 0;
+        letter-spacing: -1px;
+        text-align: center;
+      }
+      .section-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #64748b;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      /* Buttons */
+      .btn {
+        background: var(--bg-white);
+        border: 2px solid var(--main-color);
+        color: var(--main-color);
+        padding: 8px 12px;
+        border-radius: 30px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 2px 2px 0px var(--main-color);
+        font-family: "Inter", sans-serif;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .btn:hover {
+        background-color: var(--secondary-color);
+        color: #fff;
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0px var(--main-color);
+      }
+      .btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 0px 0px 0px var(--main-color);
+      }
+      .btn-active {
+        background-color: var(--main-color);
+        color: #fff;
+        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+      }
+      .btn-reset {
+        border: 2px solid var(--main-color);
+        color: white;
+        padding: 10px;
+        border-radius: 30px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 2px 2px 0px var(--main-color);
+        font-family: "Inter", sans-serif;
+        transition: 0.2s;
+      }
+      .btn-reset:hover {
+        transform: translate(-1px, -1px);
+        box-shadow: 4px 4px 0px var(--main-color);
+        filter: brightness(1.1);
+      }
+      .btn-group {
+        display: flex;
+        gap: 10px;
+      }
+      /* Inputs */
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--main-color);
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 3px;
+        outline: none;
+      }
+      input[type="color"] {
+        -webkit-appearance: none;
+        border: 2px solid var(--main-color);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        cursor: pointer;
+        padding: 0;
+      }
+      input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+      input[type="color"]::-webkit-color-swatch { border: none; }
+      .palette-presets {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+      }
+      .shape-btn {
+        aspect-ratio: 1;
+        padding: 0;
+        border-radius: 8px;
+        font-size: 1.2rem;
+      }
+      .color-swatch {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: transform 0.2s;
+      }
+      .color-swatch:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 2px var(--main-color);
+      }
+      .palette-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      #color-info { flex: 1; text-align: left; }
+      #color-name-display {
+        font-size: 0.85rem; font-weight: 700; color: var(--main-color);
+      }
+      #color-map-display {
+        font-size: 0.7rem; color: #64748b; font-style: italic;
+      }
+      /* Modals */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+      }
+      .modal-content {
+        background: var(--bg-white);
+        border: 2px solid var(--main-color);
+        box-shadow: 8px 8px 0px var(--main-color);
+        padding: 30px;
+        width: 400px;
+        max-width: 90%;
+        border-radius: 4px;
+        position: relative;
+        text-align: center;
+      }
+      .close-btn {
+        position: absolute;
+        top: 10px; right: 15px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--main-color);
+      }
+      #viewer {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 0;
+      }
+    </style>
   </head>
   <body>
     <div
@@ -120,33 +343,27 @@
         <div class="nav-btn"><span class="nav-span">Paint</span></div>
       </div>
       <div class="nav-option">
-        <input
-          value="page3"
-          name="btn"
-          type="radio"
-          class="nav-input"
-          onclick="location.href = '#'"
-        />
-        <div class="nav-btn"><span class="nav-span">Page 3</span></div>
+        <input value="journal" name="btn" type="radio" class="nav-input" onclick="location.href = 'JournalPage.html'" />
+        <div class="nav-btn"><span class="nav-span">Journal</span></div>
       </div>
       <div class="nav-option">
-        <input
-          value="page4"
-          name="btn"
-          type="radio"
-          class="nav-input"
-          onclick="location.href = '#'"
-        />
-        <div class="nav-btn"><span class="nav-span">Page 4</span></div>
+        <input value="support" name="btn" type="radio" class="nav-input" onclick="location.href = 'SupportPage.html'" />
+        <div class="nav-btn"><span class="nav-span">Support</span></div>
       </div>
+    </div>
+    
+    <div class="settings-btn" onclick="location.href = 'SettingsPage.html'">
+      <img src="../Designs/setting.png" alt="Settings" style="height: 20px; width: 20px;">
     </div>
 
     <div id="sidebar">
-      <h2>WHITEMASK STUDIO</h2>
+      <div class="sidebar-title-card">
+        <h2>WHITEMASK STUDIO</h2>
+      </div>
 
-      <div class="palette-box">
+      <div class="sidebar-card">
         <label class="section-label" style="margin-top: 0"
-          >1. Choose a color</label
+          >Color Palette</label
         >
         <div class="palette-controls">
           <input
@@ -163,11 +380,22 @@
         <label class="section-label" style="font-size: 0.65rem; color: #94a3b8"
           >Quick Presets</label
         >
-        <div class="palette-presets" id="palette-container"></div>
+        <div class="palette-presets" id="palette-container">
+            <div class="color-swatch" style="background: #ef4444;" title="Anger" onclick="selectColor('#ef4444')"></div>
+            <div class="color-swatch" style="background: #f97316;" title="Energy" onclick="selectColor('#f97316')"></div>
+            <div class="color-swatch" style="background: #eab308;" title="Joy" onclick="selectColor('#eab308')"></div>
+            <div class="color-swatch" style="background: #22c55e;" title="Growth" onclick="selectColor('#22c55e')"></div>
+            <div class="color-swatch" style="background: #3b82f6;" title="Sadness" onclick="selectColor('#3b82f6')"></div>
+            <div class="color-swatch" style="background: #a855f7;" title="Fear" onclick="selectColor('#a855f7')"></div>
+            <div class="color-swatch" style="background: #ec4899;" title="Love" onclick="selectColor('#ec4899')"></div>
+            <div class="color-swatch" style="background: #64748b;" title="Neutral" onclick="selectColor('#64748b')"></div>
+            <div class="color-swatch" style="background: #000000;" title="Void" onclick="selectColor('#000000')"></div>
+            <div class="color-swatch" style="background: #ffffff; border: 1px solid #cbd5e1;" title="Clarity" onclick="selectColor('#ffffff')"></div>
+        </div>
       </div>
 
-      <div>
-        <label class="section-label">Interaction Mode</label>
+      <div class="sidebar-card">
+        <label class="section-label">Tools & Controls</label>
         <div class="btn-group">
           <button
             id="tool-move"
@@ -180,14 +408,10 @@
             <span>🖊️</span> Draw/Stamp
           </button>
         </div>
-        <div class="btn-group" style="margin-top: 5px">
-          <button class="btn" onclick="undo()" title="Ctrl+Z">↶ Undo</button>
-          <button class="btn" onclick="redo()" title="Ctrl+Y">↷ Redo</button>
-        </div>
-      </div>
-
-      <div>
-        <label class="section-label">Tool Type</label>
+        
+        <div style="height: 1px; background: #e2e8f0; margin: 5px 0;"></div>
+        
+        <label class="section-label">Brush Type</label>
         <div class="btn-group">
           <button
             id="type-brush"
@@ -200,10 +424,8 @@
             ⭐ Stamp
           </button>
         </div>
-      </div>
 
-      <div id="shape-selector-container" style="display: none">
-        <label class="section-label">Select Shape</label>
+        <div id="shape-selector-container" style="display: none; margin-top: 5px;">
         <div class="palette-presets" id="shape-grid">
           <button class="btn shape-btn active" onclick="setShape('circle')">
             <i class="fas fa-circle"></i>
@@ -236,9 +458,10 @@
             <i class="fas fa-hurricane"></i>
           </button>
         </div>
-      </div>
+        </div>
 
-      <div>
+        <div style="height: 1px; background: #e2e8f0; margin: 5px 0;"></div>
+
         <label class="section-label"
           >Size: <span id="size-val">25</span>px</label
         >
@@ -251,9 +474,14 @@
           step="1"
           oninput="updateBrushSize(this.value)"
         />
+        
+        <div class="btn-group" style="margin-top: 10px">
+          <button class="btn" onclick="undo()" title="Ctrl+Z" style="flex:1">↶ Undo</button>
+          <button class="btn" onclick="redo()" title="Ctrl+Y" style="flex:1">↷ Redo</button>
+        </div>
       </div>
 
-      <div>
+      <div class="sidebar-card">
         <label class="section-label">Mask Expression</label>
         <div class="btn-group">
           <button
@@ -272,8 +500,8 @@
         </div>
       </div>
 
-      <div id="meterContainer">
-        <label class="section-label" style="color: #64748b; margin: 0"
+      <div id="meterContainer" class="sidebar-card" style="background: #1e293b; border-color: #334155; color: white;">
+        <label class="section-label" style="color: #94a3b8; margin: 0"
           >Leading Emotion</label
         >
         <div id="leadingEmotion">NEUTRAL</div>
@@ -308,7 +536,8 @@
         </div>
       </div>
 
-      <div class="btn-group" style="margin-top: 10px">
+      <div class="sidebar-card">
+        <div class="btn-group">
         <button
           class="btn-reset"
           onclick="resetFace()"
@@ -323,13 +552,13 @@
         >
           Save to Journal
         </button>
+        </div>
       </div>
 
-      <div
+      <div class="sidebar-card"
         style="
-          margin-top: 15px;
-          border-top: 1px solid #cbd5e1;
-          padding-top: 10px;
+          border-top: 2px solid var(--main-color);
+          padding-top: 15px;
         "
       >
         <div
@@ -341,7 +570,7 @@
         >
           <label class="section-label">Recent Entries</label>
           <a
-            href="#"
+            href="JournalPage.html"
             style="
               font-size: 0.65rem;
               color: #ef4444;
@@ -357,5 +586,13 @@
 
     <div id="viewer"></div>
     <script src="../Scripts/paintPage.js"></script>
+    <script>
+        function selectColor(color) {
+            const input = document.getElementById('colorWheelInput');
+            input.value = color;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    </script>
   </body>
 </html>

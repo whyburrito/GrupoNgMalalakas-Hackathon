@@ -1,0 +1,57 @@
+/* Specific overrides for the Settings Page */
+
+/* Override the rotated style from the About section in HomePage */
+.about-section {
+  transform: none !important;
+  text-align: left !important;
+  cursor: default;
+}
+
+.about-section:hover {
+  transform: none !important;
+}
+
+.about-section::before {
+  content: none !important;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: var(--main-color);
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+.save-btn {
+  background: var(--main-color);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.save-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px var(--main-color);
+}
+
+.active-settings-btn {
+  background-color: var(--secondary-color);
+}

@@ -1,0 +1,88 @@
+body {
+    background-color: #cbd5e1;
+    overflow-y: auto;
+  }
+  .journal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    padding-bottom: 50px;
+  }
+  .journal-card {
+    background: var(--bg-white);
+    border: 2px solid var(--main-color);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .journal-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 10px 10px 0px var(--main-color);
+  }
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+  }
+  .entry-date {
+    font-weight: 800;
+    color: var(--main-color);
+    font-size: 0.85rem;
+  }
+  .entry-emotion-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .entry-img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    background-color: #f8fafc;
+  }
+  .entry-note {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    line-height: 1.5;
+    max-height: 100px;
+    overflow-y: auto;
+    font-style: italic;
+    background: #f1f5f9;
+    padding: 10px;
+    border-radius: 6px;
+  }
+  .delete-btn {
+    background: #ef4444;
+    color: white;
+    border: 2px solid var(--main-color);
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8rem;
+    align-self: flex-end;
+    box-shadow: 2px 2px 0px var(--main-color);
+    transition: 0.2s;
+  }
+  .delete-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px var(--main-color);
+  }
+  .empty-state {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 50px;
+    color: #64748b;
+  }
