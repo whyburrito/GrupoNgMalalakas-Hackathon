@@ -1,13 +1,34 @@
 <!doctype html>
 <html>
   <head>
-    <title>WhiteMask | Settings</title>
+    <title>AnonyMask | Settings</title>
     <link rel="stylesheet" href="../Designs/homePage.css" />
     <link rel="stylesheet" href="../Designs/settingsPage.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
+    <style>
+      /* Extra style for Log Out button */
+      .logout-btn {
+        background: #ef4444; /* Red */
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 1rem;
+        transition: 0.2s;
+        margin-top: 15px; /* Spacing from Save button */
+        width: 100%; /* Full width looks good here */
+      }
+      .logout-btn:hover {
+        background: #dc2626;
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0px #7f1d1d;
+      }
+    </style>
   </head>
   <body>
     <div class="nav-wrapper">
@@ -19,9 +40,7 @@
           class="nav-input"
           onclick="location.href = 'HomePage.html'"
         />
-        <div class="nav-btn">
-          <span class="nav-span">Home</span>
-        </div>
+        <div class="nav-btn"><span class="nav-span">Home</span></div>
       </div>
       <div class="nav-option">
         <input
@@ -31,9 +50,7 @@
           class="nav-input"
           onclick="location.href = 'PaintPage.html'"
         />
-        <div class="nav-btn">
-          <span class="nav-span">Paint</span>
-        </div>
+        <div class="nav-btn"><span class="nav-span">Paint</span></div>
       </div>
       <div class="nav-option">
         <input
@@ -43,9 +60,7 @@
           class="nav-input"
           onclick="location.href = 'JournalPage.html'"
         />
-        <div class="nav-btn">
-          <span class="nav-span">Journal</span>
-        </div>
+        <div class="nav-btn"><span class="nav-span">Journal</span></div>
       </div>
       <div class="nav-option">
         <input
@@ -55,38 +70,112 @@
           class="nav-input"
           onclick="location.href = 'SupportPage.html'"
         />
-        <div class="nav-btn">
-          <span class="nav-span">Support</span>
-        </div>
+        <div class="nav-btn"><span class="nav-span">Support</span></div>
       </div>
     </div>
-    <div class="settings-btn active-settings-btn" onclick="location.href = 'SettingsPage.html'">
-        <img src="../Designs/setting.png" alt="Settings" style="height: 20px; width: 20px;">
+
+    <div
+      class="settings-btn active-settings-btn"
+      onclick="location.href = 'SettingsPage.html'"
+    >
+      <img
+        src="../Designs/setting.png"
+        alt="Settings"
+        style="height: 20px; width: 20px"
+      />
     </div>
 
     <main class="content-container">
       <h1 class="gallery-header">ACCOUNT SETTINGS</h1>
-      
+
       <section class="about-section">
-          <div class="about-text">
-              <h2>Edit Profile</h2>
-              <form>
-                  <div class="form-group">
-                      <label class="form-label">Display Name</label>
-                      <input type="text" value="Artist" class="form-input">
-                  </div>
-                  <div class="form-group">
-                      <label class="form-label">Email Address</label>
-                      <input type="email" value="user@whitemask.com" class="form-input">
-                  </div>
-                  <div class="form-group" style="margin-bottom: 25px;">
-                      <label class="form-label">Password</label>
-                      <input type="password" value="password123" class="form-input">
-                  </div>
-                  <button type="button" class="save-btn">SAVE CHANGES</button>
-              </form>
-          </div>
+        <div class="about-text">
+          <h2>Edit Profile</h2>
+          <form onsubmit="saveSettings(event)">
+            <div class="form-group">
+              <label class="form-label">Display Name</label>
+              <input
+                type="text"
+                id="set-name"
+                class="form-input"
+                placeholder="Your Name"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input
+                type="email"
+                id="set-email"
+                class="form-input"
+                placeholder="email@example.com"
+                readonly
+                style="background: #e2e8f0; color: #64748b; cursor: not-allowed"
+              />
+            </div>
+            <div class="form-group" style="margin-bottom: 25px">
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                id="set-pass"
+                class="form-input"
+                placeholder="New Password"
+              />
+            </div>
+            <button type="submit" class="save-btn">SAVE CHANGES</button>
+            <button type="button" class="logout-btn" onclick="logout()">
+              LOG OUT
+            </button>
+          </form>
+        </div>
       </section>
     </main>
+
+    <script>
+      // --- 1. Load User Data ---
+      const session = JSON.parse(
+        localStorage.getItem("whitemask_current_session"),
+      );
+
+      if (!session) {
+        // Not logged in? Go to login page
+        window.location.href = "LoginRegisterPage.html";
+      } else {
+        // Populate form
+        document.getElementById("set-name").value = session.name;
+        document.getElementById("set-email").value = session.email;
+        document.getElementById("set-pass").value = session.pass;
+      }
+
+      // --- 2. Save Changes ---
+      function saveSettings(e) {
+        e.preventDefault();
+        const newName = document.getElementById("set-name").value;
+        const newPass = document.getElementById("set-pass").value;
+
+        // Update session object
+        session.name = newName;
+        session.pass = newPass;
+
+        // Save to session AND database
+        localStorage.setItem(
+          "whitemask_current_session",
+          JSON.stringify(session),
+        );
+        localStorage.setItem(
+          "whitemask_user_" + session.email,
+          JSON.stringify(session),
+        );
+
+        alert("Profile updated successfully!");
+      }
+
+      // --- 3. Logout ---
+      function logout() {
+        if (confirm("Are you sure you want to log out?")) {
+          localStorage.removeItem("whitemask_current_session");
+          window.location.href = "LoginRegisterPage.html";
+        }
+      }
+    </script>
   </body>
 </html>

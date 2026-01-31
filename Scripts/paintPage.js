@@ -17,8 +17,8 @@ const STREAK_KEY = "whitemask_negative_streak";
 let currentColor = emotions[1].hex;
 let currentBrushSize = 25;
 let interactionMode = "view";
-let activeTool = "brush"; // 'brush' or 'stamp'
-let currentShape = "circle"; // 'circle', 'square', 'heart', etc.
+let activeTool = "brush";
+let currentShape = "circle";
 let isDrawing = false;
 let currentExpression = "neutral";
 let currentLeader = { name: "NEUTRAL", count: 0, hex: "#ccc" };
@@ -141,15 +141,13 @@ function updateBrushSize(val) {
   document.getElementById("size-val").innerText = val;
 }
 
-// --- NEW: TOOL & SHAPE SWITCHING ---
+// --- TOOL & SHAPE SWITCHING ---
 window.setToolType = function (type) {
   activeTool = type;
   document.getElementById("type-brush").className =
     type === "brush" ? "btn btn-active" : "btn";
   document.getElementById("type-stamp").className =
     type === "stamp" ? "btn btn-active" : "btn";
-
-  // Toggle Shape Selector
   const shapeSelector = document.getElementById("shape-selector-container");
   if (type === "stamp") {
     shapeSelector.style.display = "block";
@@ -160,10 +158,8 @@ window.setToolType = function (type) {
 
 window.setShape = function (shape) {
   currentShape = shape;
-  // Visually update active button
   const buttons = document.querySelectorAll(".shape-btn");
   buttons.forEach((btn) => btn.classList.remove("active"));
-  // Find the button clicked (simple heuristic for this demo)
   event.currentTarget.classList.add("active");
 };
 
@@ -240,7 +236,6 @@ function renderFinalTexture() {
 function drawSpecificShape(ctx, shape, x, y, size, color) {
   ctx.fillStyle = color;
   ctx.beginPath();
-
   switch (shape) {
     case "square":
       ctx.rect(x - size, y - size, size * 2, size * 2);
@@ -255,7 +250,6 @@ function drawSpecificShape(ctx, shape, x, y, size, color) {
       ctx.closePath();
       break;
     case "heart":
-      // Bezier heart
       ctx.moveTo(x, y - size * 0.3);
       ctx.bezierCurveTo(
         x,
@@ -319,13 +313,6 @@ function drawSpecificShape(ctx, shape, x, y, size, color) {
       ctx.lineTo(x, y - size * 0.1);
       ctx.closePath();
       break;
-    case "pentagon":
-      for (let i = 0; i < 5; i++) {
-        let angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
-        ctx.lineTo(x + size * Math.cos(angle), y + size * Math.sin(angle));
-      }
-      ctx.closePath();
-      break;
     case "flower":
       for (let i = 0; i < 5; i++) {
         let angle = (i * 2 * Math.PI) / 5;
@@ -341,10 +328,9 @@ function drawSpecificShape(ctx, shape, x, y, size, color) {
       ctx.quadraticCurveTo(x - size, y - size * 0.5, x, y - size);
       break;
     case "spiral":
-      // Archimedean spiral approximation
       let turns = 3;
       let step = size / (turns * 10);
-      ctx.beginPath(); // Reset so we don't fill, just stroke
+      ctx.beginPath();
       for (let i = 0; i < turns * 10; i++) {
         let angle = 0.5 * i;
         let r = step * i;
@@ -356,9 +342,8 @@ function drawSpecificShape(ctx, shape, x, y, size, color) {
       ctx.lineWidth = currentBrushSize / 4;
       ctx.strokeStyle = color;
       ctx.stroke();
-      return; // Exit because we stroked, didn't fill
+      return;
   }
-
   ctx.fill();
 }
 
@@ -482,18 +467,40 @@ function updateStreakAndCheck(emotionName) {
   }
 }
 
-window.loadJournalEntry = function (entry) {
-  if (!confirm("Load this entry? Unsaved work will be overwritten.")) return;
+// --- LOADING ENTRY LOGIC ---
+function loadEntryData(entry) {
+  console.log("Loading entry:", entry.id);
   const img = new Image();
   img.onload = function () {
     uCtx.clearRect(0, 0, userPaintLayer.width, userPaintLayer.height);
     uCtx.drawImage(img, 0, 0);
     setExpression(entry.expression || "neutral");
+    renderFinalTexture();
     analyzeMask();
     saveState();
+    console.log("Entry loaded.");
+  };
+  img.onerror = function () {
+    console.error("Failed to load image from entry.");
   };
   img.src = entry.image;
-};
+}
+
+// --- REDIRECT CHECKER ---
+function checkForRedirectLoad() {
+  const loadId = localStorage.getItem("whitemask_load_request");
+  if (loadId) {
+    console.log("Found redirect request for ID:", loadId);
+    const entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    const entry = entries.find((e) => e.id == loadId);
+    if (entry) {
+      loadEntryData(entry);
+    } else {
+      console.warn("Entry not found.");
+    }
+    localStorage.removeItem("whitemask_load_request");
+  }
+}
 
 function renderJournalList() {
   const container = document.getElementById("journalList");
@@ -508,7 +515,7 @@ function renderJournalList() {
     const div = document.createElement("div");
     div.className = "journal-entry";
     div.innerHTML = `<div class="entry-info"><strong>${entry.date}</strong></div><div class="entry-emotion" style="background:${entry.color}">${entry.emotion}</div>`;
-    div.onclick = () => loadJournalEntry(entry);
+    div.onclick = () => loadEntryData(entry);
     container.appendChild(div);
   });
 }
@@ -599,6 +606,13 @@ function init3D() {
   checkWellnessPatterns(entries);
 }
 
+// --- WAIT FOR PAGE LOAD BEFORE CHECKING REDIRECT ---
+window.addEventListener("load", () => {
+  setTimeout(checkForRedirectLoad, 100);
+});
+
+init3D();
+
 function getIntersects(event, object) {
   const rect = renderer.domElement.getBoundingClientRect();
   mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -617,7 +631,6 @@ function drawOnTexture(uv) {
     uCtx.fillStyle = currentColor;
     uCtx.fill();
   } else if (activeTool === "stamp") {
-    // Draw Shape Once (Used in mousedown)
     drawSpecificShape(
       uCtx,
       currentShape,
@@ -637,13 +650,11 @@ function onMouseDown(e) {
   if (intersects.length > 0) {
     isDrawing = true;
     if (activeTool === "stamp") {
-      // Stamp only triggers ONCE per click
       drawOnTexture(intersects[0].uv);
-      isDrawing = false; // Prevent dragging stamps
+      isDrawing = false;
       saveState();
       analyzeMask();
     } else {
-      // Brush triggers drag
       drawOnTexture(intersects[0].uv);
     }
   }
@@ -671,5 +682,3 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
-
-init3D();

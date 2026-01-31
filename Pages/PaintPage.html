@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>WhiteMask V35 | Exact Color Match</title>
+    <title>AnonyMask | Mask Painting</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <link rel="stylesheet" href="../Designs/homePage.css" />
@@ -42,14 +42,14 @@
         width: 0px;
         background: transparent;
       }
-      
+
       /* Sidebar Cards */
       .sidebar-card {
         background: var(--bg-white);
         border: 2px solid var(--main-color);
         border-radius: 12px;
         padding: 16px;
-        box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
+        box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -57,18 +57,18 @@
       }
       .sidebar-card:hover {
         transform: translateY(-2px);
-        box-shadow: 8px 8px 0px rgba(0,0,0,0.15);
+        box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.15);
       }
-      
+
       .sidebar-title-card {
         background: var(--main-color);
         color: white;
         padding: 15px;
         border-radius: 12px;
         text-align: center;
-        box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+        box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
       }
-      
+
       #sidebar h2 {
         font-size: 1.5rem;
         font-weight: 800;
@@ -117,7 +117,7 @@
       .btn-active {
         background-color: var(--main-color);
         color: #fff;
-        box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+        box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
       }
       .btn-reset {
         border: 2px solid var(--main-color);
@@ -158,8 +158,12 @@
         cursor: pointer;
         padding: 0;
       }
-      input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-      input[type="color"]::-webkit-color-swatch { border: none; }
+      input[type="color"]::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+      input[type="color"]::-webkit-color-swatch {
+        border: none;
+      }
       .palette-presets {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
@@ -189,18 +193,28 @@
         gap: 10px;
         margin-bottom: 10px;
       }
-      #color-info { flex: 1; text-align: left; }
+      #color-info {
+        flex: 1;
+        text-align: left;
+      }
       #color-name-display {
-        font-size: 0.85rem; font-weight: 700; color: var(--main-color);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--main-color);
       }
       #color-map-display {
-        font-size: 0.7rem; color: #64748b; font-style: italic;
+        font-size: 0.7rem;
+        color: #64748b;
+        font-style: italic;
       }
       /* Modals */
       .modal-overlay {
         display: none;
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         background: rgba(255, 255, 255, 0.8);
         z-index: 2000;
         justify-content: center;
@@ -220,15 +234,18 @@
       }
       .close-btn {
         position: absolute;
-        top: 10px; right: 15px;
+        top: 10px;
+        right: 15px;
         font-size: 1.5rem;
         cursor: pointer;
         color: var(--main-color);
       }
       #viewer {
         position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         z-index: 0;
       }
     </style>
@@ -311,7 +328,7 @@
           </button>
           <button
             class="btn btn-active"
-            onclick="location.href = '#'"
+            onclick="location.href = 'SupportPage.html'"
             style="flex: 1; background: #ef4444; border-color: #ef4444"
           >
             Go to Support
@@ -343,17 +360,33 @@
         <div class="nav-btn"><span class="nav-span">Paint</span></div>
       </div>
       <div class="nav-option">
-        <input value="journal" name="btn" type="radio" class="nav-input" onclick="location.href = 'JournalPage.html'" />
+        <input
+          value="journal"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = 'JournalPage.html'"
+        />
         <div class="nav-btn"><span class="nav-span">Journal</span></div>
       </div>
       <div class="nav-option">
-        <input value="support" name="btn" type="radio" class="nav-input" onclick="location.href = 'SupportPage.html'" />
+        <input
+          value="support"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = 'SupportPage.html'"
+        />
         <div class="nav-btn"><span class="nav-span">Support</span></div>
       </div>
     </div>
-    
+
     <div class="settings-btn" onclick="location.href = 'SettingsPage.html'">
-      <img src="../Designs/setting.png" alt="Settings" style="height: 20px; width: 20px;">
+      <img
+        src="../Designs/setting.png"
+        alt="Settings"
+        style="height: 20px; width: 20px"
+      />
     </div>
 
     <div id="sidebar">
@@ -362,9 +395,7 @@
       </div>
 
       <div class="sidebar-card">
-        <label class="section-label" style="margin-top: 0"
-          >Color Palette</label
-        >
+        <label class="section-label" style="margin-top: 0">Color Palette</label>
         <div class="palette-controls">
           <input
             type="color"
@@ -381,16 +412,66 @@
           >Quick Presets</label
         >
         <div class="palette-presets" id="palette-container">
-            <div class="color-swatch" style="background: #ef4444;" title="Anger" onclick="selectColor('#ef4444')"></div>
-            <div class="color-swatch" style="background: #f97316;" title="Energy" onclick="selectColor('#f97316')"></div>
-            <div class="color-swatch" style="background: #eab308;" title="Joy" onclick="selectColor('#eab308')"></div>
-            <div class="color-swatch" style="background: #22c55e;" title="Growth" onclick="selectColor('#22c55e')"></div>
-            <div class="color-swatch" style="background: #3b82f6;" title="Sadness" onclick="selectColor('#3b82f6')"></div>
-            <div class="color-swatch" style="background: #a855f7;" title="Fear" onclick="selectColor('#a855f7')"></div>
-            <div class="color-swatch" style="background: #ec4899;" title="Love" onclick="selectColor('#ec4899')"></div>
-            <div class="color-swatch" style="background: #64748b;" title="Neutral" onclick="selectColor('#64748b')"></div>
-            <div class="color-swatch" style="background: #000000;" title="Void" onclick="selectColor('#000000')"></div>
-            <div class="color-swatch" style="background: #ffffff; border: 1px solid #cbd5e1;" title="Clarity" onclick="selectColor('#ffffff')"></div>
+          <div
+            class="color-swatch"
+            style="background: #ef4444"
+            title="Anger"
+            onclick="selectColor('#ef4444')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #f97316"
+            title="Energy"
+            onclick="selectColor('#f97316')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #eab308"
+            title="Joy"
+            onclick="selectColor('#eab308')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #22c55e"
+            title="Growth"
+            onclick="selectColor('#22c55e')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #3b82f6"
+            title="Sadness"
+            onclick="selectColor('#3b82f6')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #a855f7"
+            title="Fear"
+            onclick="selectColor('#a855f7')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #ec4899"
+            title="Love"
+            onclick="selectColor('#ec4899')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #64748b"
+            title="Neutral"
+            onclick="selectColor('#64748b')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #000000"
+            title="Void"
+            onclick="selectColor('#000000')"
+          ></div>
+          <div
+            class="color-swatch"
+            style="background: #ffffff; border: 1px solid #cbd5e1"
+            title="Clarity"
+            onclick="selectColor('#ffffff')"
+          ></div>
         </div>
       </div>
 
@@ -408,9 +489,9 @@
             <span>🖊️</span> Draw/Stamp
           </button>
         </div>
-        
-        <div style="height: 1px; background: #e2e8f0; margin: 5px 0;"></div>
-        
+
+        <div style="height: 1px; background: #e2e8f0; margin: 5px 0"></div>
+
         <label class="section-label">Brush Type</label>
         <div class="btn-group">
           <button
@@ -425,42 +506,45 @@
           </button>
         </div>
 
-        <div id="shape-selector-container" style="display: none; margin-top: 5px;">
-        <div class="palette-presets" id="shape-grid">
-          <button class="btn shape-btn active" onclick="setShape('circle')">
-            <i class="fas fa-circle"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('square')">
-            <i class="fas fa-square"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('triangle')">
-            <i class="fas fa-play" style="transform: rotate(-90deg)"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('heart')">
-            <i class="fas fa-heart"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('star')">
-            <i class="fas fa-star"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('cloud')">
-            <i class="fas fa-cloud"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('bolt')">
-            <i class="fas fa-bolt"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('flower')">
-            <i class="fas fa-fan"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('leaf')">
-            <i class="fas fa-leaf"></i>
-          </button>
-          <button class="btn shape-btn" onclick="setShape('spiral')">
-            <i class="fas fa-hurricane"></i>
-          </button>
-        </div>
+        <div
+          id="shape-selector-container"
+          style="display: none; margin-top: 5px"
+        >
+          <div class="palette-presets" id="shape-grid">
+            <button class="btn shape-btn active" onclick="setShape('circle')">
+              <i class="fas fa-circle"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('square')">
+              <i class="fas fa-square"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('triangle')">
+              <i class="fas fa-play" style="transform: rotate(-90deg)"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('heart')">
+              <i class="fas fa-heart"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('star')">
+              <i class="fas fa-star"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('cloud')">
+              <i class="fas fa-cloud"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('bolt')">
+              <i class="fas fa-bolt"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('flower')">
+              <i class="fas fa-fan"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('leaf')">
+              <i class="fas fa-leaf"></i>
+            </button>
+            <button class="btn shape-btn" onclick="setShape('spiral')">
+              <i class="fas fa-hurricane"></i>
+            </button>
+          </div>
         </div>
 
-        <div style="height: 1px; background: #e2e8f0; margin: 5px 0;"></div>
+        <div style="height: 1px; background: #e2e8f0; margin: 5px 0"></div>
 
         <label class="section-label"
           >Size: <span id="size-val">25</span>px</label
@@ -474,10 +558,14 @@
           step="1"
           oninput="updateBrushSize(this.value)"
         />
-        
+
         <div class="btn-group" style="margin-top: 10px">
-          <button class="btn" onclick="undo()" title="Ctrl+Z" style="flex:1">↶ Undo</button>
-          <button class="btn" onclick="redo()" title="Ctrl+Y" style="flex:1">↷ Redo</button>
+          <button class="btn" onclick="undo()" title="Ctrl+Z" style="flex: 1">
+            ↶ Undo
+          </button>
+          <button class="btn" onclick="redo()" title="Ctrl+Y" style="flex: 1">
+            ↷ Redo
+          </button>
         </div>
       </div>
 
@@ -500,7 +588,11 @@
         </div>
       </div>
 
-      <div id="meterContainer" class="sidebar-card" style="background: #1e293b; border-color: #334155; color: white;">
+      <div
+        id="meterContainer"
+        class="sidebar-card"
+        style="background: #1e293b; border-color: #334155; color: white"
+      >
         <label class="section-label" style="color: #94a3b8; margin: 0"
           >Leading Emotion</label
         >
@@ -521,45 +613,30 @@
             The canvas is currently blank. Express yourself to begin analysis.
           </div>
         </div>
-        <div id="hotlineBox">
-          <div class="hotline-title">⚠️ Pattern Detected</div>
-          <div class="hotline-text">
-            We've noticed a pattern of high distress over your last few entries.
-            Please remember you are not alone.
-          </div>
-          <span class="hotline-number"
-            >Crisis Text Line: Text HOME to 741741</span
-          >
-          <span class="hotline-number"
-            >Suicide & Crisis Lifeline: Dial 988</span
-          >
-        </div>
       </div>
 
       <div class="sidebar-card">
         <div class="btn-group">
-        <button
-          class="btn-reset"
-          onclick="resetFace()"
-          style="background: #64748b; flex: 1"
-        >
-          Reset
-        </button>
-        <button
-          class="btn-reset"
-          onclick="initiateSave()"
-          style="background: #22c55e; flex: 2"
-        >
-          Save to Journal
-        </button>
+          <button
+            class="btn-reset"
+            onclick="resetFace()"
+            style="background: #64748b; flex: 1"
+          >
+            Reset
+          </button>
+          <button
+            class="btn-reset"
+            onclick="initiateSave()"
+            style="background: #22c55e; flex: 2"
+          >
+            Save to Journal
+          </button>
         </div>
       </div>
 
-      <div class="sidebar-card"
-        style="
-          border-top: 2px solid var(--main-color);
-          padding-top: 15px;
-        "
+      <div
+        class="sidebar-card"
+        style="border-top: 2px solid var(--main-color); padding-top: 15px"
       >
         <div
           style="
@@ -587,12 +664,12 @@
     <div id="viewer"></div>
     <script src="../Scripts/paintPage.js"></script>
     <script>
-        function selectColor(color) {
-            const input = document.getElementById('colorWheelInput');
-            input.value = color;
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
+      function selectColor(color) {
+        const input = document.getElementById("colorWheelInput");
+        input.value = color;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      }
     </script>
   </body>
 </html>
