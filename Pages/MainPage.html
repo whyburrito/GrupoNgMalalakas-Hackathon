@@ -1,12 +1,273 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <title>Home Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="Designs/mainPage.css" />
+    <title>WhiteMask V16.1 | Color Analysis</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+      body {
+        margin: 0;
+        background: #e2e8f0;
+        font-family: "Inter", sans-serif;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #sidebar {
+        width: 320px;
+        background: #f8fafc;
+        padding: 25px;
+        border-right: 1px solid #cbd5e1;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        z-index: 10;
+      }
+      .canvas-area {
+        position: relative;
+        width: 270px;
+        height: 340px;
+        border: 2px solid #94a3b8;
+        border-radius: 15px;
+        overflow: hidden;
+        background: white;
+      }
+      canvas#paintCanvas {
+        width: 100%;
+        height: 100%;
+        cursor: crosshair;
+      }
+      #viewer {
+        flex: 1;
+        cursor: grab;
+        background: #e2e8f0;
+      }
+
+      /* Chromatic UI */
+      #vibeContainer {
+        background: #1e293b;
+        color: white;
+        padding: 15px;
+        border-radius: 12px;
+      }
+      .vibe-label {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        margin-bottom: 5px;
+      }
+      #vibeText {
+        font-weight: bold;
+        color: #38bdf8;
+        font-size: 1.2rem;
+      }
+      .bar-bg {
+        height: 6px;
+        background: #334155;
+        border-radius: 3px;
+        margin-top: 10px;
+      }
+      #vibeBar {
+        height: 100%;
+        width: 0%;
+        background: #38bdf8;
+        border-radius: 3px;
+        transition: 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .btn {
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #0f172a;
+        color: white;
+      }
+    </style>
   </head>
   <body>
-    <script src="script.js"></script>
+    <div id="sidebar">
+      <h2 style="margin: 0; font-size: 1.1rem">WHITEMASK V16.1</h2>
+
+      <div class="canvas-area">
+        <canvas id="paintCanvas" width="512" height="640"></canvas>
+      </div>
+
+      <div id="vibeContainer">
+        <div class="vibe-label">CHROMATIC ANALYSIS:</div>
+        <div id="vibeText">NEUTRAL</div>
+        <div class="bar-bg"><div id="vibeBar"></div></div>
+      </div>
+
+      <input
+        type="color"
+        id="colorPicker"
+        value="#3b82f6"
+        style="
+          width: 100%;
+          height: 40px;
+          border: none;
+          cursor: pointer;
+          border-radius: 8px;
+        "
+      />
+      <button class="btn" onclick="resetFace()">Reset Canvas</button>
+    </div>
+
+    <div id="viewer"></div>
+
+    <script>
+      const canvas = document.getElementById("paintCanvas");
+      const ctx = canvas.getContext("2d");
+      let isDrawing = false;
+
+      function analyzeColorVibe() {
+        const imgData = ctx.getImageData(0, 0, 512, 640).data;
+        let r = 0,
+          g = 0,
+          b = 0,
+          totalPixels = 0;
+
+        // Sample pixels (skipping every 10 to keep it fast)
+        for (let i = 0; i < imgData.length; i += 40) {
+          // Ignore pure white background pixels
+          if (
+            imgData[i] < 250 ||
+            imgData[i + 1] < 250 ||
+            imgData[i + 2] < 250
+          ) {
+            r += imgData[i];
+            g += imgData[i + 1];
+            b += imgData[i + 2];
+            totalPixels++;
+          }
+        }
+
+        if (totalPixels === 0) {
+          updateUI("NEUTRAL", 0, "#38bdf8");
+          return;
+        }
+
+        const avgR = r / totalPixels;
+        const avgG = g / totalPixels;
+        const avgB = b / totalPixels;
+
+        // Logic Engine
+        let vibe = "NEUTRAL";
+        let intensity = 0;
+        let color = "#38bdf8";
+
+        if (avgR > avgB + 30) {
+          vibe =
+            avgG > avgR * 0.8 ? "JOYFUL / ENERGETIC" : "INTENSE / AGGRESSIVE";
+          color = "#ef4444";
+          intensity = (avgR / 255) * 100;
+        } else if (avgB > avgR + 30) {
+          vibe = avgG > avgB * 0.8 ? "SERENE / CALM" : "MELANCHOLY / DEEP";
+          color = "#3b82f6";
+          intensity = (avgB / 255) * 100;
+        } else if (avgG > avgR && avgG > avgB) {
+          vibe = "GROWTH / NATURE";
+          color = "#22c55e";
+          intensity = (avgG / 255) * 100;
+        }
+
+        updateUI(vibe, intensity, color);
+      }
+
+      function updateUI(text, percent, color) {
+        document.getElementById("vibeText").innerText = text;
+        document.getElementById("vibeText").style.color = color;
+        document.getElementById("vibeBar").style.width = percent + "%";
+        document.getElementById("vibeBar").style.background = color;
+      }
+
+      // Drawing
+      canvas.onmousedown = () => (isDrawing = true);
+      window.onmouseup = () => {
+        isDrawing = false;
+        analyzeColorVibe();
+      };
+      canvas.onmousemove = (e) => {
+        if (!isDrawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.fillStyle = document.getElementById("colorPicker").value;
+        ctx.beginPath();
+        ctx.arc(
+          (e.clientX - rect.left) * (512 / rect.width),
+          (e.clientY - rect.top) * (640 / rect.height),
+          12,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fill();
+        if (mat) mat.map.needsUpdate = true;
+      };
+
+      function resetFace() {
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, 512, 640);
+        if (mat) mat.map.needsUpdate = true;
+        analyzeColorVibe();
+      }
+
+      // --- THREE JS ---
+      let scene, camera, renderer, mat;
+      function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xe2e8f0);
+        const container = document.getElementById("viewer");
+        camera = new THREE.PerspectiveCamera(
+          35,
+          container.clientWidth / container.clientHeight,
+          0.1,
+          1000,
+        );
+        camera.position.z = 10;
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+        new THREE.OrbitControls(camera, renderer.domElement);
+
+        const geo = new THREE.SphereGeometry(2.8, 200, 200, 0, Math.PI);
+        const pos = geo.attributes.position;
+        const uv = geo.attributes.uv;
+        for (let i = 0; i < pos.count; i++) {
+          let x = pos.getX(i),
+            y = pos.getY(i),
+            z = pos.getZ(i);
+          pos.setX(i, x * 1.15);
+          pos.setY(i, y * 1.35);
+          uv.setXY(i, x / 3.0 + 0.5, y / 3.8 + 0.5);
+          const nose = Math.exp(-(x * x * 25 + Math.pow(y - 0.1, 2) * 10));
+          z += nose * 0.35;
+          const eyeX = Math.abs(x) - 1.05;
+          const eyeY = y - 0.45;
+          const eyeSocket = Math.exp(-(eyeX * eyeX * 15 + eyeY * eyeY * 15));
+          z -= eyeSocket * 0.6;
+          const mCurve = Math.pow(x, 2) * 0.5 - (y + 1.2);
+          const mInd = Math.exp(-(mCurve * mCurve * 15 + x * x * 2));
+          if (y < -0.4) z -= mInd * 0.4;
+          pos.setZ(i, z);
+        }
+        geo.computeVertexNormals();
+        mat = new THREE.MeshStandardMaterial({
+          map: new THREE.CanvasTexture(canvas),
+          roughness: 0.65,
+        });
+        scene.add(new THREE.Mesh(geo, mat));
+        scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+        const l = new THREE.DirectionalLight(0xffffff, 0.7);
+        l.position.set(0, 5, 10);
+        scene.add(l);
+        resetFace();
+        animate();
+      }
+      function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      }
+      init();
+    </script>
   </body>
 </html>
