@@ -20,7 +20,7 @@
 
         // Save User to "Database" (LocalStorage)
         const user = { name, email, pass };
-        localStorage.setItem("whitemask_user_" + email, JSON.stringify(user));
+        localStorage.setItem("anonymask_user_" + email, JSON.stringify(user));
 
         alert("Account created! Please log in.");
         // Flip back to login side (optional visual flair)
@@ -33,13 +33,13 @@
         const pass = document.getElementById("login-pass").value;
 
         const storedUser = JSON.parse(
-          localStorage.getItem("whitemask_user_" + email),
+          localStorage.getItem("anonymask_user_" + email),
         );
 
         if (storedUser && storedUser.pass === pass) {
           // Set "Session"
           localStorage.setItem(
-            "whitemask_current_session",
+            "anonymask_current_session",
             JSON.stringify(storedUser),
           );
           window.location.href = "HomePage.html";
