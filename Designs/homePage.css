@@ -1,6 +1,7 @@
 :root {
-  --bg-color: #0f172a;
+  --bg-color: #f1f5f9; /* Changed to a lighter grey to make polaroids pop */
   --text-dark: #1e293b;
+  --main-color: #323232;
 }
 
 body {
@@ -8,25 +9,25 @@ body {
   background: var(--bg-color);
   font-family: "Inter", sans-serif;
   height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto; /* Allow scrolling for gallery */
 }
 
-/* --- Navigation --- */
-/* From Uiverse.io by LightAndy1 */ 
+/* --- Navigation (Keeping your existing styles) --- */
 .nav-wrapper {
   --font-color-dark: #323232;
   --font-color-light: #fff;
-  --bg-color: #fff;
+  --bg-white: #fff;
   --main-color: #323232;
   --secondary-color: #505050;
-  position: absolute;
+  position: fixed; /* Fixed so it stays while scrolling */
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: 340px; /* Adjusted for 4 items */
+  width: 340px;
   height: 36px;
-  background-color: var(--bg-color);
+  background-color: var(--bg-white);
   border: 2px solid var(--main-color);
   border-radius: 34px;
   display: flex;
@@ -34,60 +35,74 @@ body {
   box-shadow: 4px 4px var(--main-color);
 }
 
-.nav-option {
-  margin-right: 5px;
-  width: 80.5px;
-  height: 28px;
-  position: relative;
-  top: 2px;
-  left: 2px;
-  border-radius: 34px;
-  transition: 0.25s cubic-bezier(0, 0, 0, 1);
+/* ... (Your other nav-option/btn/span styles remain the same) ... */
+
+/* --- Gallery Styles --- */
+.content-container {
+  margin-top: 100px;
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
-.nav-option:last-child {
-  margin-right: 4px;
+.gallery-header {
+  font-weight: 800;
+  font-size: 2.5rem;
+  color: var(--main-color);
+  margin-bottom: 50px;
+  letter-spacing: -1px;
 }
 
-.nav-option:hover {
-  background-color: var(--secondary-color);
+.polaroid-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 per horizontal row */
+  gap: 40px;
+  padding-bottom: 50px;
 }
 
-.nav-option:hover .nav-span {
-  color: var(--font-color-light);
+.polaroid {
+  background: white;
+  padding: 15px 15px 30px 15px;
+  border: 2px solid var(--main-color);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.nav-input {
+/* Subtle tilts for that authentic look */
+.polaroid:nth-child(even) {
+  transform: rotate(2deg);
+}
+.polaroid:nth-child(odd) {
+  transform: rotate(-1deg);
+}
+
+.polaroid:hover {
+  transform: scale(1.05) rotate(0deg);
+  box-shadow: 12px 12px 0px var(--main-color);
+  z-index: 10;
+}
+
+.photo-placeholder {
   width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-  appearance: none;
-  cursor: pointer;
+  aspect-ratio: 1 / 1; /* Square photo */
+  background: #e2e8f0;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
 }
 
-.nav-btn {
-  width: 100%;
-  height: 100%;
-  border-radius: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.caption {
+  font-family: "Courier New", Courier, monospace; /* Handwritten feel */
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #333;
+  text-transform: uppercase;
 }
 
-.nav-span {
-  color: var(--font-color-dark);
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.nav-input:checked + .nav-btn {
-  background-color: var(--main-color);
-  transition: 0.2s cubic-bezier(0, 0, 0, 1);
-}
-
-.nav-input:checked + .nav-btn .nav-span {
-  color: var(--font-color-light);
-  transition: 0.25s cubic-bezier(0, 0, 0, 1);
+/* Responsive: 2 per row on small screens */
+@media (max-width: 768px) {
+  .polaroid-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

@@ -1,34 +1,114 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-    <head>
-        <link rel="stylesheet" href="../Designs/homePage.css" />
-    </head>
-    <body>
-        <div class="nav-wrapper">
-            <div class="nav-option">
-              <input checked="" value="home" name="btn" type="radio" class="nav-input" onclick="location.href='HomePage.html'" />
-              <div class="nav-btn">
-                <span class="nav-span">Home</span>
-              </div>
-            </div>
-            <div class="nav-option">
-              <input value="paint" name="btn" type="radio" class="nav-input" onclick="location.href='PaintPage.html'" />
-              <div class="nav-btn">
-                <span class="nav-span">Paint</span>
-              </div>
-            </div>
-            <div class="nav-option">
-              <input value="page3" name="btn" type="radio" class="nav-input" onclick="location.href='#'" />
-              <div class="nav-btn">
-                <span class="nav-span">Page 3</span>
-              </div>
-            </div>
-            <div class="nav-option">
-              <input value="page4" name="btn" type="radio" class="nav-input" onclick="location.href='#'" />
-              <div class="nav-btn">
-                <span class="nav-span">Page 4</span>
-              </div>
-            </div>
+  <head>
+    <link rel="stylesheet" href="../Designs/homePage.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="nav-wrapper">
+      <div class="nav-option">
+        <input
+          checked=""
+          value="home"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = 'HomePage.html'"
+        />
+        <div class="nav-btn">
+          <span class="nav-span">Home</span>
         </div>
-    </body>
+      </div>
+      <div class="nav-option">
+        <input
+          value="paint"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = 'PaintPage.html'"
+        />
+        <div class="nav-btn">
+          <span class="nav-span">Paint</span>
+        </div>
+      </div>
+      <div class="nav-option">
+        <input
+          value="page3"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = '#'"
+        />
+        <div class="nav-btn">
+          <span class="nav-span">Journal</span>
+        </div>
+      </div>
+      <div class="nav-option">
+        <input
+          value="page4"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = '#'"
+        />
+        <div class="nav-btn">
+          <span class="nav-span">Settings</span>
+        </div>
+      </div>
+    </div>
+
+    <main class="content-container">
+      <h1 class="gallery-header">TODAY'S MOODS</h1>
+
+      <div class="polaroid-grid">
+        <div class="polaroid">
+          <div
+            class="photo-placeholder"
+            style="background: linear-gradient(45deg, #ff9a9e, #fad0c4)"
+          ></div>
+          <div class="caption">"FEELING WARM"</div>
+        </div>
+
+        <div class="polaroid">
+          <div
+            class="photo-placeholder"
+            style="background: linear-gradient(45deg, #a1c4fd, #c2e9fb)"
+          ></div>
+          <div class="caption">"CALM WATERS"</div>
+        </div>
+
+        <div class="polaroid">
+          <div
+            class="photo-placeholder"
+            style="background: linear-gradient(45deg, #f093fb, #f5576c)"
+          ></div>
+          <div class="caption">"VIBRANT CHAOS"</div>
+        </div>
+
+        <div class="polaroid">
+          <div class="photo-placeholder" style="background: #323232"></div>
+          <div class="caption">"VOID"</div>
+        </div>
+
+        <div class="polaroid">
+          <div
+            class="photo-placeholder"
+            style="background: linear-gradient(45deg, #84fab0, #8fd3f4)"
+          ></div>
+          <div class="caption">"GROWTH"</div>
+        </div>
+
+        <div class="polaroid">
+          <div
+            class="photo-placeholder"
+            style="background: linear-gradient(45deg, #fa709a, #fee140)"
+          ></div>
+          <div class="caption">"SUNSET REFLECTION"</div>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>
