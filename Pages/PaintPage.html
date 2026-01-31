@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WhiteMask V35 | Exact Color Match</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link rel="stylesheet" href="../Designs/paintPage.css" />
+  </head>
+  <body>
+    <div id="sidebar">
+      <h2>WHITEMASK STUDIO</h2>
+
+      <div class="palette-box">
+        <label class="section-label" style="margin-top: 0"
+          >1. Choose a color</label
+        >
+        <div class="palette-controls">
+          <input
+            type="color"
+            id="colorWheelInput"
+            value="#e74c3c"
+            title="Custom Color Wheel"
+          />
+          <div id="color-info">
+            <div id="color-name-display">Anger / Frustration</div>
+            <div id="color-map-display">Exact Match</div>
+          </div>
+        </div>
+        <label class="section-label" style="font-size: 0.65rem; color: #94a3b8"
+          >Quick Presets</label
+        >
+        <div class="palette-presets" id="palette-container"></div>
+      </div>
+
+      <div>
+        <label class="section-label"
+          >2. Brush Size: <span id="size-val">25</span>px</label
+        >
+        <input
+          type="range"
+          id="brushSize"
+          min="5"
+          max="60"
+          value="25"
+          step="1"
+          oninput="updateBrushSize(this.value)"
+        />
+      </div>
+
+      <div class="canvas-area">
+        <canvas id="paintCanvas" width="512" height="640"></canvas>
+      </div>
+
+      <div>
+        <label class="section-label">Mask Style</label>
+        <div class="btn-group">
+          <button
+            id="mode-neutral"
+            class="btn btn-active"
+            onclick="setExpression('neutral')"
+          >
+            Neutral
+          </button>
+          <button id="mode-happy" class="btn" onclick="setExpression('happy')">
+            Happy
+          </button>
+          <button id="mode-sad" class="btn" onclick="setExpression('sad')">
+            Sad
+          </button>
+        </div>
+      </div>
+
+      <div id="meterContainer">
+        <label class="section-label" style="color: #64748b; margin: 0"
+          >Leading Emotion</label
+        >
+        <div id="leadingEmotion">NEUTRAL</div>
+
+        <div class="bar-bg"><div id="intensityBar"></div></div>
+        <div id="intensityLabel">Intensity: 0%</div>
+
+        <div id="pieSection">
+          <div id="visualPie" class="pie-chart"></div>
+          <div id="pieLegend" class="pie-legend">
+            <div style="font-style: italic; color: #64748b; font-size: 0.65rem">
+              Paint to see breakdown...
+            </div>
+          </div>
+        </div>
+
+        <div id="aiSummaryBox">
+          <div id="aiTitle">AI Interpretation</div>
+          <div id="aiText">
+            The canvas is currently blank. Express yourself to begin analysis.
+          </div>
+        </div>
+
+        <div id="hotlineBox">
+          <div class="hotline-title">⚠️ Emotional Support Recommended</div>
+          <div class="hotline-text">
+            This pattern suggests high emotional distress. You don't have to
+            carry this alone.
+          </div>
+          <span class="hotline-number"
+            >Crisis Text Line: Text HOME to 741741</span
+          >
+          <span class="hotline-number"
+            >Suicide & Crisis Lifeline: Dial 988</span
+          >
+        </div>
+      </div>
+
+      <button class="btn-reset" onclick="resetFace()">Reset Canvas</button>
+    </div>
+
+    <div id="viewer"></div>
+
+    <script src="../Scripts/paintPage.js"></script>
+  </body>
+</html>
