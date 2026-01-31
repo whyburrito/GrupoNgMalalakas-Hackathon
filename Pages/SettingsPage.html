@@ -133,7 +133,7 @@
     <script>
       // --- 1. Load User Data ---
       const session = JSON.parse(
-        localStorage.getItem("whitemask_current_session"),
+        localStorage.getItem("anonymask_current_session"),
       );
 
       if (!session) {
@@ -158,11 +158,11 @@
 
         // Save to session AND database
         localStorage.setItem(
-          "whitemask_current_session",
+          "anonymask_current_session",
           JSON.stringify(session),
         );
         localStorage.setItem(
-          "whitemask_user_" + session.email,
+          "anonymask_user_" + session.email,
           JSON.stringify(session),
         );
 
@@ -172,7 +172,7 @@
       // --- 3. Logout ---
       function logout() {
         if (confirm("Are you sure you want to log out?")) {
-          localStorage.removeItem("whitemask_current_session");
+          localStorage.removeItem("anonymask_current_session");
           window.location.href = "LoginRegisterPage.html";
         }
       }
