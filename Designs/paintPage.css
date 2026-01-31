@@ -308,3 +308,84 @@ canvas#paintCanvas {
   background: #0f172a;
   cursor: grab;
 }
+
+/* --- Navigation --- */
+/* From Uiverse.io by LightAndy1 */ 
+.nav-wrapper {
+  --font-color-dark: #323232;
+  --font-color-light: #fff;
+  --bg-color: #fff;
+  --main-color: #323232;
+  --secondary-color: #505050;
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: 340px; /* Adjusted for 4 items */
+  height: 36px;
+  background-color: var(--bg-color);
+  border: 2px solid var(--main-color);
+  border-radius: 34px;
+  display: flex;
+  flex-direction: row;
+  box-shadow: 4px 4px var(--main-color);
+}
+
+.nav-option {
+  margin-right: 5px;
+  width: 80.5px;
+  height: 28px;
+  position: relative;
+  top: 2px;
+  left: 2px;
+  border-radius: 34px;
+  transition: 0.25s cubic-bezier(0, 0, 0, 1);
+}
+
+.nav-option:last-child {
+  margin-right: 4px;
+}
+
+.nav-option:hover {
+  background-color: var(--secondary-color);
+}
+
+.nav-option:hover .nav-span {
+  color: var(--font-color-light);
+}
+
+.nav-input {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  appearance: none;
+  cursor: pointer;
+}
+
+.nav-btn {
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-span {
+  color: var(--font-color-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.nav-input:checked + .nav-btn {
+  background-color: var(--main-color);
+  transition: 0.2s cubic-bezier(0, 0, 0, 1);
+}
+
+.nav-input:checked + .nav-btn .nav-span {
+  color: var(--font-color-light);
+  transition: 0.25s cubic-bezier(0, 0, 0, 1);
+}
