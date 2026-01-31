@@ -310,7 +310,7 @@ canvas#paintCanvas {
 }
 
 /* --- Navigation --- */
-/* From Uiverse.io by LightAndy1 */ 
+/* From Uiverse.io by LightAndy1 */
 .nav-wrapper {
   --font-color-dark: #323232;
   --font-color-light: #fff;
@@ -388,4 +388,94 @@ canvas#paintCanvas {
 .nav-input:checked + .nav-btn .nav-span {
   color: var(--font-color-light);
   transition: 0.25s cubic-bezier(0, 0, 0, 1);
+}
+
+/* ... existing CSS ... */
+
+/* JOURNAL LIST STYLES */
+.journal-container {
+  max-height: 150px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.journal-entry {
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.journal-entry:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.entry-info {
+  font-size: 0.75rem;
+  color: #334155;
+}
+
+.entry-emotion {
+  font-weight: bold;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: white;
+}
+
+/* MODAL STYLES */
+.modal-overlay {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #64748b;
+}
+
+#modalImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  margin-top: 10px;
+  background: #f8fafc;
+}
+
+#modalEmotion {
+  font-weight: 800;
+  color: #334155;
+  margin: 5px 0;
 }

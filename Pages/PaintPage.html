@@ -5,34 +5,142 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <link rel="stylesheet" href="../Designs/paintPage.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
   </head>
   <body>
-    <div class="nav-wrapper">
-      <div class="nav-option">
-        <input value="home" name="btn" type="radio" class="nav-input" onclick="location.href='HomePage.html'" />
-        <div class="nav-btn">
-          <span class="nav-span">Home</span>
-        </div>
+    <div
+      id="entryModal"
+      class="modal-overlay"
+      onclick="closeModal('entryModal')"
+    >
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-btn" onclick="closeModal('entryModal')"
+          >&times;</span
+        >
+        <h3 id="modalDate">Date</h3>
+        <h4 id="modalEmotion">Emotion</h4>
+        <p
+          id="modalNote"
+          style="font-style: italic; color: #555; margin-bottom: 10px"
+        ></p>
+        <img id="modalImage" src="" alt="Mask Snapshot" />
       </div>
-      <div class="nav-option">
-        <input checked="" value="paint" name="btn" type="radio" class="nav-input" onclick="location.href='PaintPage.html'" />
-        <div class="nav-btn">
-          <span class="nav-span">Paint</span>
-        </div>
-      </div>
-      <div class="nav-option">
-        <input value="page3" name="btn" type="radio" class="nav-input" onclick="location.href='#'" />
-        <div class="nav-btn">
-          <span class="nav-span">Page 3</span>
-        </div>
-      </div>
-      <div class="nav-option">
-        <input value="page4" name="btn" type="radio" class="nav-input" onclick="location.href='#'" />
-        <div class="nav-btn">
-          <span class="nav-span">Page 4</span>
+    </div>
+
+    <div id="saveModal" class="modal-overlay">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <h3>Save to Journal</h3>
+        <p>How are you feeling right now? (Optional)</p>
+        <textarea
+          id="journalEntryText"
+          placeholder="Leave blank to use AI interpretation..."
+          rows="4"
+          style="
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+          "
+        ></textarea>
+        <div
+          class="btn-group"
+          style="margin-top: 15px; display: flex; gap: 10px"
+        >
+          <button class="btn" onclick="closeModal('saveModal')" style="flex: 1">
+            Cancel
+          </button>
+          <button
+            class="btn btn-active"
+            onclick="confirmSave()"
+            style="flex: 1; background: #22c55e; border-color: #22c55e"
+          >
+            Save Entry
+          </button>
         </div>
       </div>
     </div>
+
+    <div id="patternModal" class="modal-overlay">
+      <div
+        class="modal-content"
+        style="border-top: 5px solid #ef4444"
+        onclick="event.stopPropagation()"
+      >
+        <h3 style="color: #ef4444">⚠️ Pattern Detected</h3>
+        <p>
+          We've noticed you've been carrying heavy emotions for a while now.
+        </p>
+        <p>Would you like to see some resources that might help?</p>
+        <div
+          class="btn-group"
+          style="margin-top: 20px; display: flex; gap: 10px"
+        >
+          <button
+            class="btn"
+            onclick="closeModal('patternModal')"
+            style="flex: 1"
+          >
+            I'm okay
+          </button>
+          <button
+            class="btn btn-active"
+            onclick="location.href = '#'"
+            style="flex: 1; background: #ef4444; border-color: #ef4444"
+          >
+            Go to Support
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-wrapper">
+      <div class="nav-option">
+        <input
+          value="home"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = 'HomePage.html'"
+        />
+        <div class="nav-btn"><span class="nav-span">Home</span></div>
+      </div>
+      <div class="nav-option">
+        <input
+          checked=""
+          value="paint"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = 'PaintPage.html'"
+        />
+        <div class="nav-btn"><span class="nav-span">Paint</span></div>
+      </div>
+      <div class="nav-option">
+        <input
+          value="page3"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = '#'"
+        />
+        <div class="nav-btn"><span class="nav-span">Page 3</span></div>
+      </div>
+      <div class="nav-option">
+        <input
+          value="page4"
+          name="btn"
+          type="radio"
+          class="nav-input"
+          onclick="location.href = '#'"
+        />
+        <div class="nav-btn"><span class="nav-span">Page 4</span></div>
+      </div>
+    </div>
+
     <div id="sidebar">
       <h2>WHITEMASK STUDIO</h2>
 
@@ -59,26 +167,94 @@
       </div>
 
       <div>
+        <label class="section-label">Interaction Mode</label>
+        <div class="btn-group">
+          <button
+            id="tool-move"
+            class="btn btn-active"
+            onclick="setMode('view')"
+          >
+            <span>✥</span> Move
+          </button>
+          <button id="tool-paint" class="btn" onclick="setMode('paint')">
+            <span>🖊️</span> Draw/Stamp
+          </button>
+        </div>
+        <div class="btn-group" style="margin-top: 5px">
+          <button class="btn" onclick="undo()" title="Ctrl+Z">↶ Undo</button>
+          <button class="btn" onclick="redo()" title="Ctrl+Y">↷ Redo</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="section-label">Tool Type</label>
+        <div class="btn-group">
+          <button
+            id="type-brush"
+            class="btn btn-active"
+            onclick="setToolType('brush')"
+          >
+            🖌️ Brush
+          </button>
+          <button id="type-stamp" class="btn" onclick="setToolType('stamp')">
+            ⭐ Stamp
+          </button>
+        </div>
+      </div>
+
+      <div id="shape-selector-container" style="display: none">
+        <label class="section-label">Select Shape</label>
+        <div class="palette-presets" id="shape-grid">
+          <button class="btn shape-btn active" onclick="setShape('circle')">
+            <i class="fas fa-circle"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('square')">
+            <i class="fas fa-square"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('triangle')">
+            <i class="fas fa-play" style="transform: rotate(-90deg)"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('heart')">
+            <i class="fas fa-heart"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('star')">
+            <i class="fas fa-star"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('cloud')">
+            <i class="fas fa-cloud"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('bolt')">
+            <i class="fas fa-bolt"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('flower')">
+            <i class="fas fa-fan"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('leaf')">
+            <i class="fas fa-leaf"></i>
+          </button>
+          <button class="btn shape-btn" onclick="setShape('spiral')">
+            <i class="fas fa-hurricane"></i>
+          </button>
+        </div>
+      </div>
+
+      <div>
         <label class="section-label"
-          >2. Brush Size: <span id="size-val">25</span>px</label
+          >Size: <span id="size-val">25</span>px</label
         >
         <input
           type="range"
           id="brushSize"
           min="5"
-          max="60"
+          max="100"
           value="25"
           step="1"
           oninput="updateBrushSize(this.value)"
         />
       </div>
 
-      <div class="canvas-area">
-        <canvas id="paintCanvas" width="512" height="640"></canvas>
-      </div>
-
       <div>
-        <label class="section-label">Mask Style</label>
+        <label class="section-label">Mask Expression</label>
         <div class="btn-group">
           <button
             id="mode-neutral"
@@ -101,10 +277,8 @@
           >Leading Emotion</label
         >
         <div id="leadingEmotion">NEUTRAL</div>
-
         <div class="bar-bg"><div id="intensityBar"></div></div>
         <div id="intensityLabel">Intensity: 0%</div>
-
         <div id="pieSection">
           <div id="visualPie" class="pie-chart"></div>
           <div id="pieLegend" class="pie-legend">
@@ -113,19 +287,17 @@
             </div>
           </div>
         </div>
-
         <div id="aiSummaryBox">
           <div id="aiTitle">AI Interpretation</div>
           <div id="aiText">
             The canvas is currently blank. Express yourself to begin analysis.
           </div>
         </div>
-
         <div id="hotlineBox">
-          <div class="hotline-title">⚠️ Emotional Support Recommended</div>
+          <div class="hotline-title">⚠️ Pattern Detected</div>
           <div class="hotline-text">
-            This pattern suggests high emotional distress. You don't have to
-            carry this alone.
+            We've noticed a pattern of high distress over your last few entries.
+            Please remember you are not alone.
           </div>
           <span class="hotline-number"
             >Crisis Text Line: Text HOME to 741741</span
@@ -136,11 +308,54 @@
         </div>
       </div>
 
-      <button class="btn-reset" onclick="resetFace()">Reset Canvas</button>
+      <div class="btn-group" style="margin-top: 10px">
+        <button
+          class="btn-reset"
+          onclick="resetFace()"
+          style="background: #64748b; flex: 1"
+        >
+          Reset
+        </button>
+        <button
+          class="btn-reset"
+          onclick="initiateSave()"
+          style="background: #22c55e; flex: 2"
+        >
+          Save to Journal
+        </button>
+      </div>
+
+      <div
+        style="
+          margin-top: 15px;
+          border-top: 1px solid #cbd5e1;
+          padding-top: 10px;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+          "
+        >
+          <label class="section-label">Recent Entries</label>
+          <a
+            href="#"
+            style="
+              font-size: 0.65rem;
+              color: #ef4444;
+              font-weight: bold;
+              text-decoration: none;
+            "
+            >See All</a
+          >
+        </div>
+        <div id="journalList" class="journal-container"></div>
+      </div>
     </div>
 
     <div id="viewer"></div>
-
     <script src="../Scripts/paintPage.js"></script>
   </body>
 </html>
