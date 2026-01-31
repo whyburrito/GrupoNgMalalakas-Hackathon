@@ -1,0 +1,546 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Aura | Mental Health & Creative Studio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --accent: #6366f1;
+        --danger: #ef4444;
+        --text: #1e293b;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+      }
+
+      /* --- Navigation --- */
+      nav {
+        height: 60px;
+        background: var(--panel);
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 30px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+      .nav-link {
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: 0.3s;
+        padding: 10px 15px;
+        border-radius: 8px;
+      }
+      .nav-link.active {
+        color: var(--accent);
+        background: #eef2ff;
+      }
+
+      .page {
+        display: none;
+        height: calc(100vh - 60px);
+        margin-top: 60px;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      .page.active {
+        display: flex;
+      }
+
+      /* --- Journal Page --- */
+      #journal-view {
+        gap: 20px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .editor-container {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      textarea {
+        flex: 1;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        font-family: inherit;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        outline: none;
+        resize: none;
+      }
+      .analysis-sidebar {
+        flex: 1;
+        background: var(--panel);
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      /* --- Paint Page --- */
+      #paint-view {
+        padding: 0;
+        position: relative;
+      }
+      #viewer {
+        flex: 1;
+        background: #0f172a;
+        border-radius: 0;
+      }
+      #paint-controls {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 280px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      /* --- Analysis Dashboard --- */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        width: 100%;
+      }
+      .stat-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+      }
+
+      /* --- Helpline Overlay --- */
+      #helpline-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+      }
+      .helpline-card {
+        background: var(--danger);
+        padding: 40px;
+        border-radius: 20px;
+        max-width: 500px;
+      }
+
+      /* --- Utility --- */
+      .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+      .bar-outer {
+        height: 10px;
+        background: #f1f5f9;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .bar-inner {
+        height: 100%;
+        background: var(--accent);
+        width: 0%;
+        transition: 0.5s;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <div class="nav-link active" onclick="showPage('journal')">Journal</div>
+      <div class="nav-link" onclick="showPage('paint')">Paint Studio</div>
+      <div class="nav-link" onclick="showPage('analysis')">Health Analysis</div>
+      <div class="nav-link" onclick="showPage('settings')">Settings</div>
+    </nav>
+
+    <div id="journal" class="page active">
+      <div id="journal-view" style="display: flex; width: 100%">
+        <div class="editor-container">
+          <h2 style="margin: 0">Daily Reflection</h2>
+          <p style="color: #64748b; margin: 0">How are you feeling today?</p>
+          <textarea
+            id="journal-input"
+            placeholder="Start typing your thoughts..."
+            oninput="analyzeText()"
+          ></textarea>
+        </div>
+        <div class="analysis-sidebar">
+          <h3 style="margin: 0">Live Mood Analysis</h3>
+          <div>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #64748b"
+              >DOMINANT EMOTION</span
+            >
+            <div
+              id="text-emotion"
+              style="font-size: 1.5rem; font-weight: 800; color: var(--accent)"
+            >
+              NEUTRAL
+            </div>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; font-weight: 700; color: #64748b"
+              >INTENSITY</span
+            >
+            <div class="bar-outer">
+              <div id="text-intensity" class="bar-inner"></div>
+            </div>
+          </div>
+          <div
+            id="ai-conclusion"
+            style="
+              font-size: 0.9rem;
+              line-height: 1.5;
+              color: #475569;
+              background: #f8fafc;
+              padding: 15px;
+              border-radius: 8px;
+            "
+          >
+            Your entry seems balanced. Keep expressing yourself.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="paint" class="page">
+      <div id="paint-controls">
+        <h3>Mask Studio</h3>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 15px;
+          "
+          id="palette"
+        ></div>
+        <label style="font-size: 0.7rem; font-weight: bold">BRUSH SIZE</label>
+        <input
+          type="range"
+          id="sizeRange"
+          min="5"
+          max="80"
+          value="25"
+          style="width: 100%"
+        />
+        <button
+          class="btn btn-primary"
+          style="width: 100%; margin-top: 20px"
+          onclick="toggleRotate()"
+        >
+          Toggle Rotation
+        </button>
+      </div>
+      <div id="viewer" style="width: 100%; height: 100%"></div>
+    </div>
+
+    <div id="analysis" class="page">
+      <div style="max-width: 1000px; margin: 0 auto; width: 100%">
+        <h2>Health Overview</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h4 style="margin: 0; color: #64748b">Emotional Stability</h4>
+            <div id="stability-score" style="font-size: 3rem; font-weight: 800">
+              --
+            </div>
+            <p id="stability-text">Pending more data...</p>
+          </div>
+          <div class="stat-card">
+            <h4 style="margin: 0; color: #64748b">Creative Output</h4>
+            <div id="creative-score" style="font-size: 3rem; font-weight: 800">
+              0
+            </div>
+            <p>Stroke density on mask</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="helpline-overlay">
+      <div class="helpline-card">
+        <h1>We are here for you.</h1>
+        <p>
+          Your recent entries suggest you might be going through a very
+          difficult time. Please consider reaching out to someone who can help.
+        </p>
+        <h2 style="margin: 20px 0">National Crisis Line: 988</h2>
+        <button
+          class="btn"
+          style="background: white; color: var(--danger)"
+          onclick="closeHelpline()"
+        >
+          I understand, continue
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- PAGE NAVIGATION ---
+      function showPage(id) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((l) => l.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        event.target.classList.add("active");
+        if (id === "paint")
+          setTimeout(() => {
+            resize3D();
+          }, 100);
+      }
+
+      // --- JOURNAL LOGIC (Basic NLP) ---
+      const sadWords = [
+        "sad",
+        "depressed",
+        "lonely",
+        "tired",
+        "hate",
+        "hurt",
+        "pain",
+        "hopeless",
+        "end",
+        "kill",
+        "crying",
+      ];
+      const happyWords = [
+        "happy",
+        "great",
+        "excited",
+        "love",
+        "good",
+        "joy",
+        "wonderful",
+        "blessed",
+      ];
+
+      function analyzeText() {
+        const text = document
+          .getElementById("journal-input")
+          .value.toLowerCase();
+        if (!text) return;
+
+        let sCount = 0;
+        let hCount = 0;
+        sadWords.forEach((w) => {
+          if (text.includes(w)) sCount++;
+        });
+        happyWords.forEach((w) => {
+          if (text.includes(w)) hCount++;
+        });
+
+        const intensity = Math.min((sCount + hCount) * 10, 100);
+        document.getElementById("text-intensity").style.width = intensity + "%";
+
+        let mood = "NEUTRAL";
+        let conclusion = "Your writing style appears grounded.";
+
+        if (sCount > hCount) {
+          mood = "DISTRESSED";
+          conclusion =
+            "You seem to be carrying some heavy emotions. Writing them down is a great first step.";
+          if (sCount > 4) triggerHelpline();
+        } else if (hCount > sCount) {
+          mood = "POSITIVE";
+          conclusion = "Your entry radiates a lot of positive energy today!";
+        }
+
+        document.getElementById("text-emotion").innerText = mood;
+        document.getElementById("text-emotion").style.color =
+          mood === "DISTRESSED"
+            ? "#ef4444"
+            : mood === "POSITIVE"
+              ? "#10b981"
+              : "#6366f1";
+        document.getElementById("ai-conclusion").innerText = conclusion;
+
+        // Update Health Dashboard
+        document.getElementById("stability-score").innerText =
+          100 - sCount * 15 + "%";
+        document.getElementById("stability-text").innerText =
+          mood === "DISTRESSED" ? "Action Recommended" : "Optimal Range";
+      }
+
+      function triggerHelpline() {
+        document.getElementById("helpline-overlay").style.display = "flex";
+      }
+      function closeHelpline() {
+        document.getElementById("helpline-overlay").style.display = "none";
+      }
+
+      // --- PAINT LOGIC (Integrated from your previous code) ---
+      let scene,
+        camera,
+        renderer,
+        mesh,
+        mat,
+        controls,
+        isPainting = false,
+        rotateMode = false;
+      let currentColor = "#6366f1",
+        currentBrushSize = 25;
+      const canvas = document.createElement("canvas");
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext("2d");
+      const paintLayer = document.createElement("canvas");
+      paintLayer.width = 1024;
+      paintLayer.height = 1024;
+      const pCtx = paintLayer.getContext("2d");
+
+      function initPaint() {
+        const container = document.getElementById("viewer");
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(
+          45,
+          container.clientWidth / container.clientHeight,
+          0.1,
+          1000,
+        );
+        camera.position.z = 8;
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enabled = false;
+
+        const geo = new THREE.SphereGeometry(2.5, 64, 64, 0, Math.PI);
+        const tex = new THREE.CanvasTexture(canvas);
+        mat = new THREE.MeshStandardMaterial({
+          map: tex,
+          roughness: 0.5,
+          metalness: 0.1,
+          side: THREE.DoubleSide,
+        });
+        mesh = new THREE.Mesh(geo, mat);
+        scene.add(mesh);
+        scene.add(new THREE.AmbientLight(0xffffff, 1));
+
+        // Setup Palette
+        const colors = [
+          "#ef4444",
+          "#6366f1",
+          "#10b981",
+          "#f59e0b",
+          "#06b6d4",
+          "#ec4899",
+          "#ffffff",
+          "#000000",
+        ];
+        colors.forEach((c) => {
+          const d = document.createElement("div");
+          d.style.height = "30px";
+          d.style.background = c;
+          d.style.borderRadius = "4px";
+          d.style.cursor = "pointer";
+          d.onclick = () => (currentColor = c);
+          document.getElementById("palette").appendChild(d);
+        });
+
+        // Raycasting for 3D Paint
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        container.addEventListener("mousedown", () => {
+          if (!rotateMode) isPainting = true;
+        });
+        window.addEventListener("mouseup", () => (isPainting = false));
+        container.addEventListener("mousemove", (e) => {
+          if (!isPainting || rotateMode) return;
+          const rect = renderer.domElement.getBoundingClientRect();
+          mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+          const hits = raycaster.intersectObject(mesh);
+          if (hits.length > 0) {
+            const uv = hits[0].uv;
+            pCtx.fillStyle = currentColor;
+            pCtx.beginPath();
+            pCtx.arc(
+              uv.x * 1024,
+              (1 - uv.y) * 1024,
+              currentBrushSize,
+              0,
+              Math.PI * 2,
+            );
+            pCtx.fill();
+            updateTexture();
+          }
+        });
+
+        document.getElementById("sizeRange").oninput = (e) =>
+          (currentBrushSize = e.target.value);
+
+        updateTexture();
+        animate();
+      }
+
+      function updateTexture() {
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, 1024, 1024);
+        ctx.drawImage(paintLayer, 0, 0);
+        mat.map.needsUpdate = true;
+      }
+
+      function toggleRotate() {
+        rotateMode = !rotateMode;
+        controls.enabled = rotateMode;
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      }
+      function resize3D() {
+        const c = document.getElementById("viewer");
+        camera.aspect = c.clientWidth / c.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(c.clientWidth, c.clientHeight);
+      }
+
+      window.onload = initPaint;
+    </script>
+  </body>
+</html>

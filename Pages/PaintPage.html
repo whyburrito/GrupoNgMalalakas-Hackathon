@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WhiteMask V36 | Tabbed Studio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        @import url("../Designs/paintPage.css");
+    </style>
+<body>
+    <div id="sidebar">
+      <h2>
+        WhiteMask <span style="font-weight: 400; color: #94a3b8">Studio</span>
+      </h2>
+
+      <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="openTab('studio')">
+          Canvas
+        </button>
+        <button class="tab-btn" onclick="openTab('analysis')">Analysis</button>
+        <button class="tab-btn" onclick="openTab('config')">Settings</button>
+      </nav>
+
+      <div id="studio" class="tab-content active">
+        <div>
+          <label class="section-label">Selected Color</label>
+          <div class="palette-grid" id="palette-container"></div>
+          <input
+            type="color"
+            id="colorWheelInput"
+            value="#e74c3c"
+            style="
+              width: 100%;
+              height: 40px;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+            "
+          />
+        </div>
+
+        <div>
+          <label class="section-label"
+            >Brush Size: <span id="size-val">25</span>px</label
+          >
+          <input
+            type="range"
+            id="brushSize"
+            min="5"
+            max="60"
+            value="25"
+            oninput="updateBrushSize(this.value)"
+            style="width: 100%"
+          />
+        </div>
+
+        <div class="canvas-container">
+          <canvas id="paintCanvas" width="512" height="640"></canvas>
+        </div>
+      </div>
+
+      <div id="analysis" class="tab-content">
+        <div id="meterContainer">
+          <label class="section-label" style="color: #94a3b8"
+            >Primary State</label
+          >
+          <div
+            id="leadingEmotion"
+            style="font-weight: bold; font-size: 1.4rem; margin-bottom: 5px"
+          >
+            NEUTRAL
+          </div>
+          <div class="bar-bg"><div id="intensityBar"></div></div>
+          <div id="intensityLabel" style="font-size: 0.7rem; color: #94a3b8">
+            Energy Level: 0%
+          </div>
+
+          <div class="pie-box">
+            <div id="visualPie" class="pie-chart"></div>
+            <div id="aiSummaryBox">
+              <div style="color: #38bdf8; font-weight: 800; margin-bottom: 4px">
+                AI INTERPRETATION
+              </div>
+              <div id="aiText">
+                Start painting on the canvas to generate a psychological profile
+                of the mask.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="color: #64748b; font-size: 0.75rem; font-style: italic">
+          *Analysis is calculated based on color theory and stroke density.
+        </div>
+      </div>
+
+      <div id="config" class="tab-content">
+        <div>
+          <label class="section-label">Base Expression</label>
+          <div class="btn-group">
+            <button
+              id="mode-neutral"
+              class="btn btn-active"
+              onclick="setExpression('neutral')"
+            >
+              Neutral State
+            </button>
+            <button
+              id="mode-happy"
+              class="btn"
+              onclick="setExpression('happy')"
+            >
+              Euphoric Curve
+            </button>
+            <button id="mode-sad" class="btn" onclick="setExpression('sad')">
+              Melancholy Arch
+            </button>
+          </div>
+        </div>
+        <button class="btn-reset" onclick="resetFace()">
+          Reset Environment
+        </button>
+      </div>
+    </div>
+
+    <div id="viewer-container">
+      <button class="fs-toggle" onclick="toggleFullscreen()">
+        FULLSCREEN VIEW
+      </button>
+      <div id="viewer"></div>
+    </div>
+    <script src="../Scripts/paintPage.js"></script>
+    </body>
+    </html>
