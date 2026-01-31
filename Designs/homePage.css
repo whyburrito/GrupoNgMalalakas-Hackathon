@@ -94,6 +94,28 @@ body {
   transition: 0.25s cubic-bezier(0, 0, 0, 1);
 }
 
+.settings-btn {
+  position: fixed;
+  top: 20px;
+  left: calc(50% + 185px); /* Center + half nav width + gap */
+  width: 36px;
+  height: 36px;
+  background-color: var(--bg-white);
+  border: 2px solid var(--main-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 4px 4px var(--main-color);
+  transition: 0.25s cubic-bezier(0, 0, 0, 1);
+}
+
+.settings-btn:hover {
+  background-color: var(--secondary-color);
+}
+
 /* --- Gallery Styles --- */
 .content-container {
   margin-top: 100px;
