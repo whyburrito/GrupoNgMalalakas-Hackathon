@@ -2,6 +2,7 @@
   --bg-color: #f1f5f9; /* Changed to a lighter grey to make polaroids pop */
   --text-dark: #1e293b;
   --main-color: #323232;
+  --bg-white: #fff;
 }
 
 body {
@@ -35,7 +36,63 @@ body {
   box-shadow: 4px 4px var(--main-color);
 }
 
-/* ... (Your other nav-option/btn/span styles remain the same) ... */
+.nav-option {
+  margin-right: 5px;
+  width: 80.5px;
+  height: 28px;
+  position: relative;
+  top: 2px;
+  left: 2px;
+  border-radius: 34px;
+  transition: 0.25s cubic-bezier(0, 0, 0, 1);
+}
+
+.nav-option:last-child {
+  margin-right: 4px;
+}
+
+.nav-option:hover {
+  background-color: var(--secondary-color);
+}
+
+.nav-option:hover .nav-span {
+  color: var(--font-color-light);
+}
+
+.nav-input {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  appearance: none;
+  cursor: pointer;
+}
+
+.nav-btn {
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-span {
+  color: var(--font-color-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.nav-input:checked + .nav-btn {
+  background-color: var(--main-color);
+  transition: 0.2s cubic-bezier(0, 0, 0, 1);
+}
+
+.nav-input:checked + .nav-btn .nav-span {
+  color: var(--font-color-light);
+  transition: 0.25s cubic-bezier(0, 0, 0, 1);
+}
 
 /* --- Gallery Styles --- */
 .content-container {
@@ -56,9 +113,8 @@ body {
 }
 
 .polaroid-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 per horizontal row */
-  gap: 40px;
+  column-count: 3;
+  column-gap: 40px;
   padding-bottom: 50px;
 }
 
@@ -68,6 +124,11 @@ body {
   border: 2px solid var(--main-color);
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  break-inside: avoid;
+  margin-bottom: 40px;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Subtle tilts for that authentic look */
@@ -86,7 +147,6 @@ body {
 
 .photo-placeholder {
   width: 100%;
-  aspect-ratio: 1 / 1; /* Square photo */
   background: #e2e8f0;
   border: 1px solid #ddd;
   margin-bottom: 15px;
@@ -100,9 +160,47 @@ body {
   text-transform: uppercase;
 }
 
+/* --- About Us Section --- */
+.about-section {
+  margin: 80px auto 40px auto;
+  padding: 40px;
+  max-width: 900px;
+  background: var(--bg-white);
+  border: 2px solid var(--main-color);
+  box-shadow: 12px 12px 0px var(--main-color);
+  border-radius: 2px;
+  transform: rotate(-1deg);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-section:hover {
+  transform: rotate(0deg) scale(1.01);
+  box-shadow: 16px 16px 0px var(--main-color);
+}
+
+.about-section::before {
+  content: "ABOUT US";
+  position: absolute;
+  top: -25px;
+  left: 20px;
+  background: var(--main-color);
+  color: white;
+  padding: 5px 15px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  transform: rotate(2deg);
+}
+
+.about-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-dark);
+}
+
 /* Responsive: 2 per row on small screens */
 @media (max-width: 768px) {
   .polaroid-grid {
-    grid-template-columns: repeat(2, 1fr);
+    column-count: 2;
   }
 }

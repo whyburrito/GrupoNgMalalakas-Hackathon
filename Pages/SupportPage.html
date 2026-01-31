@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WhiteMask | Support</title>
+        <link rel="stylesheet" href="../Designs/supportPage.css" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+          rel="stylesheet"
+        />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <div class="nav-wrapper">
+            <div class="nav-option">
+                <input value="home" name="btn" type="radio" class="nav-input" onclick="location.href = 'HomePage.html'" />
+                <div class="nav-btn"><span class="nav-span">Home</span></div>
+            </div>
+            <div class="nav-option">
+                <input value="paint" name="btn" type="radio" class="nav-input" onclick="location.href = 'PaintPage.html'" />
+                <div class="nav-btn"><span class="nav-span">Paint</span></div>
+            </div>
+            <div class="nav-option">
+                <input value="journal" name="btn" type="radio" class="nav-input" onclick="location.href = '#'" />
+                <div class="nav-btn"><span class="nav-span">Journal</span></div>
+            </div>
+            <div class="nav-option">
+                <input checked="" value="support" name="btn" type="radio" class="nav-input" onclick="location.href = 'SupportPage.html'" />
+                <div class="nav-btn"><span class="nav-span">Support</span></div>
+            </div>
+        </div>
+
+        <main class="content-container">
+            <div class="page-header">
+                <h1>YOU ARE NOT ALONE</h1>
+                <p>If your emotions feel too heavy to carry, there are people ready to help lift the weight.</p>
+            </div>
+
+            <div class="resource-grid">
+                <!-- Emergency Section -->
+                <div class="card emergency">
+                    <div class="card-title">Immediate Help</div>
+                    <p>If you or someone you know is in immediate danger or experiencing a mental health crisis:</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <span>Suicide & Crisis Lifeline (Philippines)</span>
+                        <span class="hotline-number">2919</span>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <span>Crisis Hotline</span>
+                        <span class="hotline-number">1553</span>
+                    </div>
+                </div>
+
+                <!-- Grounding Technique -->
+                <div class="card calm">
+                    <div class="card-title">Box Breathing Technique</div>
+                    <p>Use this simple method to regain control when you feel overwhelmed:</p>
+                    
+                    <div style="margin-top: 15px;">
+                        <div class="technique-step">1. Inhale slowly through your nose for <strong>4 seconds</strong>.</div>
+                        <div class="technique-step">2. Hold your breath for <strong>4 seconds</strong>.</div>
+                        <div class="technique-step">3. Exhale slowly through your mouth for <strong>4 seconds</strong>.</div>
+                        <div class="technique-step">4. Hold your breath for <strong>4 seconds</strong> before starting again.</div>
+                    </div>
+                </div>
+
+                <!-- Professional Resources -->
+                <div class="card">
+                    <div class="card-title">Professional Resources</div>
+                    <p>Finding a therapist can be a great step toward understanding your emotions.</p>
+                    <ul style="line-height: 1.8; margin-top: 10px;">
+                        <li><a href="https://mentalhealthph.org/support-for-yourself/">MentalHealthPH</a></li>
+                        <li><a href="https://in-touch.org/counseling/">Psychotherapy & Mental Health Services in PH (Counseling)</a></li>
+                        <li><a href="https://www.who.int/initiatives/who-special-initiative-for-mental-health/philippines">WHO Special Initiative for Mental Health: Philippines</a></li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; font-size: 0.8rem; color: #94a3b8; margin-top: 20px;">
+                    WhiteMask Studio is an art tool for expression, not a medical device. <br>
+                    Please seek professional help for medical advice.
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
