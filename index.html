@@ -1,55 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <title>Mask Shape Editor</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="utf-8" />
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url=./Pages/PaintPage.html" />
+
+    <script type="text/javascript">
+      window.location.href = "./Pages/PaintPage.html";
+    </script>
   </head>
   <body>
-    <div id="container">
-      <div id="sidebar">
-        <h3>Mask Editor</h3>
-
-        <label>
-          Shape:
-          <select id="shapeSelect">
-            <option value="circle">Circle</option>
-            <option value="square">Square</option>
-            <option value="triangle">Triangle</option>
-          </select>
-        </label>
-
-        <label>
-          Color:
-          <input type="color" id="colorPicker" value="#ff0000" />
-        </label>
-
-        <label>
-          Size: <span id="sizeValue">50</span>px
-          <input type="range" id="sizeSlider" min="10" max="200" value="50" />
-        </label>
-
-        <label>
-          Rotation: <span id="rotationValue">0</span>&deg;
-          <input type="range" id="rotationSlider" min="0" max="360" value="0" />
-        </label>
-
-        <div id="shapePreview"></div>
-
-        <hr />
-
-        <button id="undoBtn">Undo (Ctrl+Z)</button>
-        <button id="resetBtn" style="background-color: #ffcccc;">Reset Actions</button>
-        <button id="downloadBtn" style="background-color: #ccffcc;">Download Image</button>
-
-        <hr />
-        <p id="status">Actions left: 3</p>
-      </div>
-
-      <canvas id="maskCanvas"></canvas>
-    </div>
-
-    <script src="script.js"></script>
+    <p>
+      If you are not redirected automatically,
+      <a href="./Pages/PaintPage.html">click here</a>.
+    </p>
   </body>
 </html>
